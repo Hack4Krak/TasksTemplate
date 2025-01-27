@@ -11,6 +11,8 @@ It is parsed directly by [our website](https://github.com/Hack4Krak/Hack4KrakSit
 
 The repository includes basic tools for verifying, parsing, and task creation.
 
+For more information check out [our documentation](docs/)!
+
 ## Stats
 
 ![Repobeats analytics image](https://repobeats.axiom.co/api/embed/302c940507d69624923aea749c322661176bed1b.svg "Repobeats analytics image")
