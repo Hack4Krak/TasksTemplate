@@ -1,0 +1,22 @@
+[project]
+name = "hack4krak-toolbox"
+version = "0.0.1"
+description = "CLI for managing tasks for Hack4Krak CTF"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "typer>=0.15.1",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+Homepage = "https://github.com/Hack4Krak/TasksTemplate"
+
+[project.scripts]
+toolbox = "toolbox.main:app"
+
+[project.optional-dependencies]
+test = ["pytest"]

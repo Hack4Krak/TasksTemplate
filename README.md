@@ -13,6 +13,19 @@ The repository includes basic tools for verifying, parsing, and task creation.
 
 For more information check out [our documentation](docs/)!
 
+## Development
+*Required only for running Hack4Krak Toolbox*
+
+### 1. Download all required dependencies
+```shell
+uv sync
+```
+
+### 2. Run CLI
+```shell
+uv run toolbox 
+```
+
 ## Stats
 
 ![Repobeats analytics image](https://repobeats.axiom.co/api/embed/302c940507d69624923aea749c322661176bed1b.svg "Repobeats analytics image")
