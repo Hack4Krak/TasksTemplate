@@ -14,6 +14,11 @@ dependencies = [
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+]
+
 [project.urls]
 Homepage = "https://github.com/Hack4Krak/TasksTemplate"
 
@@ -22,3 +27,6 @@ toolbox = "toolbox.main:app"
 
 [project.optional-dependencies]
 test = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["toolbox/tests/"]
