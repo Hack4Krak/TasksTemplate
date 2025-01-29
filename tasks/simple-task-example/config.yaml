@@ -1,0 +1,17 @@
+$schema: "../schema.json"
+
+id: "simple-task-example"
+name: "Simple Task Example"
+
+story:
+  - title: "Knight"
+    message: "Greetings, fellow adventurer! How fares your journey?"
+  - title: "Math Teacher"
+    message: "Cotangent is a myth! A falsehood perpetuated by American scientists!"
+  - title: "Knight"
+    message: "I see... That’s... unexpected."
+
+display:
+  icon_coordinates:
+    x: 150
+    z: 200
