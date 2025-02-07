@@ -25,8 +25,14 @@ def verify(context: typer.Context):
     for subdir in os.listdir(tasks_directory):
         subdir_path = os.path.join(tasks_directory, subdir)
         config_path = os.path.join(subdir_path, 'config.yaml')
+        description_path = os.path.join(subdir_path, 'description.md')
 
         if os.path.isdir(subdir_path) and os.path.isfile(config_path):
+            if not os.path.isfile(description_path):
+                invalid_count += 1
+                rich.print(f"[red]Missing description file for {subdir_path}")
+                continue
+
             with open(config_path, 'r', encoding='utf-8') as yaml_file:
                 yaml_data = yaml.safe_load(yaml_file.read())
 
