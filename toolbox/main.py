@@ -8,6 +8,7 @@ from typing import Annotated, Optional
 import typer
 
 import toolbox.commands.verify
+import toolbox.commands.summary
 from toolbox import commands
 
 app = typer.Typer(name="Hack4Krak Toolbox", help="CLI for managing tasks for Hack4Krak CTF", no_args_is_help=True)
@@ -41,6 +42,7 @@ def common_options(
 
 
 app.command()(commands.verify.verify)
+app.command()(commands.summary.summary)
 
 if __name__ == "__main__":
     app()
