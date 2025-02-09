@@ -1,5 +1,5 @@
 import json
-import os
+from pathlib import Path
 
 import rich
 import typer
@@ -14,11 +14,10 @@ def verify(context: typer.Context):
     """
     Verifies configuration of all tasks.
     """
-    tasks_directory = context.obj["tasks_directory"]
+    tasks_directory: Path = context.obj["tasks_directory"]
 
-    schema_path = os.path.join(tasks_directory, 'schema.json')
-    with open(schema_path, 'r') as schema_file:
-        schema = json.load(schema_file)
+    schema_path = tasks_directory / 'schema.json'
+    schema = json.loads(schema_path.read_text())
 
     valid_count = 0
     invalid_count = 0
@@ -37,6 +36,8 @@ def verify(context: typer.Context):
             continue
 
         try:
+            # print(yaml.sa
+            # fe_load(config_path.read_text(encoding='utf-8')))
             yaml_data = yaml.safe_load(config_path.read_text(encoding='utf-8'))
             validate(yaml_data, schema)
             valid_count += 1

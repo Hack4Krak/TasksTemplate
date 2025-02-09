@@ -4,7 +4,7 @@ from typing import Annotated, Optional
 
 import typer
 
-from toolbox import commands
+from toolbox.commands import summary, verify
 
 app = typer.Typer(name="Hack4Krak Toolbox", help="CLI for managing tasks for Hack4Krak CTF", no_args_is_help=True)
 
@@ -23,9 +23,11 @@ def main(
             Optional[bool], typer.Option("--version", callback=version_callback, is_eager=True,
                                          help="Shows app version")
         ] = None,
-        tasks: Path = None
+        tasks: Annotated[
+            Optional[Path],
+            typer.Option("--tasks", help="Path to tasks directory")
+        ] = Path("tasks")
 ):
-    tasks = tasks or typer.Option("tasks/", "--tasks", help="Path to tasks directory")
     ctx.obj = {"tasks_directory": tasks}
     return
 
@@ -35,8 +37,8 @@ def common_options(ctx: typer.Context,tasks: Path = None):
     ctx.obj = {"tasks_directory": tasks}
 
 
-app.command()(commands.verify.verify)
-app.command()(commands.summary.summary)
+app.command()(verify.verify)
+app.command()(summary.summary)
 
 if __name__ == "__main__":
     app()
