@@ -1,11 +1,11 @@
-import os
 import json
+import os
 
 import rich
-import yaml
 import typer
+import yaml
 from click.exceptions import Exit
-from jsonschema import validate, ValidationError
+from jsonschema import ValidationError, validate
 
 from toolbox.utils.tasks import find_tasks
 
@@ -23,7 +23,7 @@ def verify(context: typer.Context):
     valid_count = 0
     invalid_count = 0
 
-    rich.print(f"[dim]Validating tasks...")
+    rich.print("[dim]Validating tasks...")
     for subdir_path in find_tasks(tasks_directory):
         config_path = subdir_path / 'config.yaml'
         description_path = subdir_path / 'description.md'
