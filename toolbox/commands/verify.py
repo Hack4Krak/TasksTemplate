@@ -7,6 +7,8 @@ import typer
 from click.exceptions import Exit
 from jsonschema import validate, ValidationError
 
+from toolbox.utils.tasks import find_tasks
+
 
 def verify(context: typer.Context):
     """
@@ -22,26 +24,25 @@ def verify(context: typer.Context):
     invalid_count = 0
 
     rich.print(f"[dim]Validating tasks...")
-    for subdir in os.listdir(tasks_directory):
-        subdir_path = os.path.join(tasks_directory, subdir)
-        config_path = os.path.join(subdir_path, 'config.yaml')
-        description_path = os.path.join(subdir_path, 'description.md')
+    for subdir_path in find_tasks(tasks_directory):
+        config_path = subdir_path / 'config.yaml'
+        description_path = subdir_path / 'description.md'
 
-        if os.path.isdir(subdir_path) and os.path.isfile(config_path):
-            if not os.path.isfile(description_path):
-                invalid_count += 1
-                rich.print(f"[red]Missing description file for {subdir_path}")
-                continue
+        if not config_path.is_file():
+            continue
 
-            with open(config_path, 'r', encoding='utf-8') as yaml_file:
-                yaml_data = yaml.safe_load(yaml_file.read())
+        if not description_path.is_file():
+            invalid_count += 1
+            rich.print(f"[red]Missing description file for {subdir_path}")
+            continue
 
-            try:
-                validate(instance=yaml_data, schema=schema)
-                valid_count += 1
-            except ValidationError as e:
-                invalid_count += 1
-                rich.print(f"[red]Validation error in {config_path}: {e.message}")
+        try:
+            yaml_data = yaml.safe_load(config_path.read_text(encoding='utf-8'))
+            validate(yaml_data, schema)
+            valid_count += 1
+        except ValidationError as error:
+            invalid_count += 1
+            rich.print(f"[red]Validation error in {config_path}: {error.message}")
 
     total_tasks = valid_count + invalid_count
     rich.print(f"\nFinished validating all tasks: {total_tasks} tasks processed.")
