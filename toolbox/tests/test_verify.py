@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
@@ -11,7 +12,7 @@ from toolbox.commands.verify import verify
 @pytest.fixture
 def mock_context():
     context = MagicMock()
-    context.obj = {"tasks_directory": "mocked/tasks_directory"}
+    context.obj = {"tasks_directory": Path("mocked/tasks_directory")}
     return context
 
 
@@ -42,33 +43,33 @@ def invalid_task_config():
     }
 
 
-@patch("os.listdir")
-@patch("os.path.isdir")
-@patch("os.path.isfile")
-@patch("builtins.open", new_callable=mock_open)
+@patch.object(Path, "iterdir")
+@patch.object(Path, "is_dir")
+@patch.object(Path, "is_file")
+@patch.object(Path, "read_text", new_callable=mock_open)
 def test_verify_valid(mock_open_func, mock_isfile, mock_isdir, mock_listdir, mock_context, valid_schema, valid_task_config):
-    mock_listdir.return_value = ["valid_task"]
+    mock_listdir.return_value = [Path("valid_task")]
     mock_isdir.return_value = True
     mock_isfile.return_value = True
-    mock_open_func.return_value.read.side_effect = [
+    mock_open_func.side_effect = [
         json.dumps(valid_schema),
         yaml.dump(valid_task_config)
     ]
 
     verify(mock_context)
 
-    mock_open_func.return_value.read.assert_called()
+    mock_open_func.assert_called()
 
 
-@patch("os.listdir")
-@patch("os.path.isdir")
-@patch("os.path.isfile")
-@patch("builtins.open", new_callable=mock_open)
+@patch.object(Path, "iterdir")
+@patch.object(Path, "is_dir")
+@patch.object(Path, "is_file")
+@patch.object(Path, "read_text", new_callable=mock_open)
 def test_verify_invalid(mock_open_func, mock_isfile, mock_isdir, mock_listdir, mock_context, valid_schema, invalid_task_config):
-    mock_listdir.return_value = ["invalid_task"]
+    mock_listdir.return_value = [Path("invalid_task")]
     mock_isdir.return_value = True
     mock_isfile.return_value = True
-    mock_open_func.return_value.read.side_effect = [
+    mock_open_func.side_effect = [
         json.dumps(valid_schema),
         yaml.dump(invalid_task_config)
     ]

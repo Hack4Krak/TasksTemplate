@@ -2,8 +2,7 @@ from pathlib import Path
 from typing import Generator
 
 
-def find_tasks(tasks_directory: str) -> Generator[Path, None, None]:
-    tasks_directory = Path(tasks_directory)
+def find_tasks(tasks_directory: Path) -> Generator[Path, None, None]:
     if not tasks_directory.is_dir():
         raise NotADirectoryError()
 
