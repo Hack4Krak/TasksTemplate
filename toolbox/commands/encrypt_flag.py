@@ -11,14 +11,12 @@ def encrypt_flag():
     For example:
     Not "hack4krak('skibidi')" but just "skibidi".
     """
-    are_flags_same = False
-    while not are_flags_same:
+    while True:
         flag = typer.prompt("Input flag to encrypt")
-        flag_retype = typer.prompt("Retype flag")
+        flag_retype = typer.prompt("Retype flag to confirm")
         if flag != flag_retype:
             rich.print("\n[red]Inputs are not the same\n")
-            continue
-        are_flags_same = True
-    else:
-        encrypted_flag = hashlib.sha256(flag.encode('utf-8'))
-        print(encrypted_flag.hexdigest())
+        else:
+            encrypted_flag = hashlib.sha256(flag.encode('utf-8'))
+            print(encrypted_flag.hexdigest())
+            break
