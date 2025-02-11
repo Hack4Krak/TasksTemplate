@@ -47,17 +47,17 @@ def verify(context: typer.Context):
             invalid_count += 1
             rich.print(f"[red]Validation error in {config_path}: {error.message}")
 
-        if not assets_path.is_dir():
-            invalid_count += 1
-            rich.print(f"[red]Missing assets directory for {subdir_path}")
-            continue
-
         assets = yaml_data.get("assets", [])
-        for asset in assets:
-            asset_path = assets_path / str(asset["path"])
-            if not asset_path.is_file():
+        if assets:
+            if not assets_path.is_dir():
                 invalid_count += 1
-                rich.print(f"[red]Missing asset file {asset} for {subdir_path}")
+                rich.print(f"[red]Missing assets directory for {subdir_path}")
+                continue
+            for asset in assets:
+                asset_path = assets_path / str(asset["path"])
+                if not asset_path.is_file():
+                    invalid_count += 1
+                    rich.print(f"[red]Missing asset file {asset} for {subdir_path}")
 
     total_tasks = valid_count + invalid_count
     rich.print(f"\nFinished validating all tasks: {total_tasks} tasks processed.")
