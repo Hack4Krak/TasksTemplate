@@ -66,6 +66,10 @@ def verify_assets(yaml_data: dict, assets_path: Path, subdir_path: Path) -> bool
     Verifies assets for a task.
     """
     assets = yaml_data.get("assets", [])
+
+    assets_paths = [asset["path"] for asset in assets]
+    if not find_unregistered_assets(assets_path, assets_paths, subdir_path):
+        return False
     if not assets:
         return True
     if not assets_path.is_dir():
@@ -77,10 +81,6 @@ def verify_assets(yaml_data: dict, assets_path: Path, subdir_path: Path) -> bool
         if not asset_path.is_file():
             rich.print(f"[red]Missing asset file {asset} for {subdir_path}")
             return False
-
-    assets_paths = [asset["path"] for asset in assets]
-    if not find_unregistered_assets(assets_path, assets_paths, subdir_path):
-        return False
 
     return True
 
