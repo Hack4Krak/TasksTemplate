@@ -4,7 +4,7 @@ from typing import Annotated, Optional
 
 import typer
 
-from toolbox.commands import summary, verify
+from toolbox.commands import encrypt_flag, summary, verify
 
 app = typer.Typer(name="Hack4Krak Toolbox", help="CLI for managing tasks for Hack4Krak CTF", no_args_is_help=True)
 
@@ -39,6 +39,7 @@ def common_options(ctx: typer.Context,tasks: Path = None):
 
 app.command()(verify.verify)
 app.command()(summary.summary)
+app.command()(encrypt_flag.encrypt_flag)
 
 if __name__ == "__main__":
     app()
