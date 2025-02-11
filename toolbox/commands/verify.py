@@ -36,23 +36,23 @@ def verify(context: typer.Context):
             rich.print(f"[red]Missing description file for {subdir_path}")
             continue
 
-        if not assets_path.is_dir():
-            invalid_count += 1
-            rich.print(f"[red]Missing assets directory for {subdir_path}")
-            continue
+        yaml_data = yaml.safe_load(config_path.read_text(encoding='utf-8'))
 
         try:
             # print(yaml.sa
             # fe_load(config_path.read_text(encoding='utf-8')))
-            yaml_data = yaml.safe_load(config_path.read_text(encoding='utf-8'))
             validate(yaml_data, schema)
             valid_count += 1
         except ValidationError as error:
             invalid_count += 1
             rich.print(f"[red]Validation error in {config_path}: {error.message}")
 
-        yaml_data = yaml.safe_load(config_path.read_text(encoding='utf-8'))
-        assets = yaml_data["assets"]
+        if not assets_path.is_dir():
+            invalid_count += 1
+            rich.print(f"[red]Missing assets directory for {subdir_path}")
+            continue
+
+        assets = yaml_data.get("assets", [])
         for asset in assets:
             asset_path = assets_path / str(asset["path"])
             if not asset_path.is_file():
