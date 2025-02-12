@@ -1,0 +1,32 @@
+name: 📋 New Task
+description: CTF task idea.
+title: "[Task]: "
+type: "ctf task"
+body:
+  - type: textarea
+    id: taskidea
+    attributes:
+      label: Task idea
+      description: Describe the task idea.
+      placeholder: Task where...
+    validations:
+      required: true
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation
+      description: Describe the implementation.
+      placeholder:
+        1. Setup postgres database,
+        2. Create a table with...
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: additionalnotes
+    attributes:
+      label: Additional notes
+      description: Any additional context.
+      placeholder: You must wear programmer socks during task creation.
+    validations:
+      required: false
