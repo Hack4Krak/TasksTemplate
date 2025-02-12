@@ -47,8 +47,8 @@ def valid_assets():
     return {
         "assets": [
             {
-            "description": "dziengiel",
-            "path": "asset1.txt",
+                "description": "dziengiel",
+                "path": "asset1.txt",
             },
             {
                 "description": "dziengiel",
