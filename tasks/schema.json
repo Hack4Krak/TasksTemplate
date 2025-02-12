@@ -11,6 +11,21 @@
     "flag_hash": {
       "type": "string"
     },
+    "assets": {
+      "type": "array",
+      "items": {
+          "type": "object",
+          "properties": {
+            "description": {
+                "type": "string"
+            },
+            "path": {
+                "type": "string"
+            }
+          },
+          "required": ["description", "path"]
+      }
+    },
     "story": {
       "type": "array",
       "items": {
