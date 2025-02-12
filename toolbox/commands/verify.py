@@ -63,9 +63,6 @@ def verify(context: typer.Context):
 
 
 def verify_assets(yaml_data: dict, assets_path: Path, subdir_path: Path) -> bool:
-    """
-    Verifies assets for a task.
-    """
     assets = yaml_data.get("assets", [])
 
     config_assets_paths = [asset["path"] for asset in assets]
