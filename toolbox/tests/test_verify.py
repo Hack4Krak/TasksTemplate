@@ -50,7 +50,12 @@ def invalid_task_config():
 def test_verify_valid(mock_open_func, mock_isfile, mock_isdir, mock_listdir, mock_context, valid_schema, valid_task_config):
     mock_listdir.return_value = [Path("valid_task")]
     mock_isdir.return_value = True
-    mock_isfile.return_value = True
+    mock_isfile.side_effect = [
+        True,
+        True,
+        False,
+        True,
+    ]
     mock_open_func.side_effect = [
         json.dumps(valid_schema),
         yaml.dump(valid_task_config)

@@ -49,8 +49,9 @@ def verify(context: typer.Context):
 
         if not verify_assets(yaml_data, assets_path, subdir_path):
             invalid_count += 1
-        else:
-            valid_count += 1
+            continue
+
+        valid_count += 1
 
     total_tasks = valid_count + invalid_count
     rich.print(f"\nFinished validating all tasks: {total_tasks} tasks processed.")
@@ -67,9 +68,11 @@ def verify_assets(yaml_data: dict, assets_path: Path, subdir_path: Path) -> bool
     """
     assets = yaml_data.get("assets", [])
 
-    assets_paths = [asset["path"] for asset in assets]
-    if not find_unregistered_assets(assets_path, assets_paths, subdir_path):
-        return False
+    config_assets_paths = [asset["path"] for asset in assets]
+    for asset in assets_path.iterdir():
+        if asset.is_file() and asset.name not in config_assets_paths:
+            rich.print(f"[red]Unregistered asset file {asset.name} for {subdir_path}")
+            return False
     if not assets:
         return True
     if not assets_path.is_dir():
@@ -81,16 +84,5 @@ def verify_assets(yaml_data: dict, assets_path: Path, subdir_path: Path) -> bool
         if not asset_path.is_file():
             rich.print(f"[red]Missing asset file {asset} for {subdir_path}")
             return False
-
-    return True
-
-def find_unregistered_assets(assets_path: Path, assets_paths: list, subdir_path: Path) -> bool:
-    for asset in assets_path.iterdir():
-        if asset.is_file() and asset.name not in assets_paths:
-            rich.print(f"[red]Unregistered asset file {asset.name} for {subdir_path}")
-            return False
-        if asset.is_dir():
-            if not find_unregistered_assets(asset, assets_paths, subdir_path):
-                return False
 
     return True
