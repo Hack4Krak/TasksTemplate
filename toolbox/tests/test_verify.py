@@ -60,7 +60,16 @@ valid_assets =  {
 @patch.object(Path, "is_file")
 @patch.object(Path, "read_text", new_callable=mock_open)
 @patch("toolbox.commands.verify.verify_assets")
-def test_verify_valid(mock_verify_assets, mock_open_func, mock_isfile, mock_isdir, mock_listdir, mock_context, valid_schema, valid_task_config):
+def test_verify_valid(
+        mock_verify_assets,
+        mock_open_func,
+        mock_isfile,
+        mock_isdir,
+        mock_listdir,
+        mock_context,
+        valid_schema,
+        valid_task_config
+    ):
     mock_verify_assets.return_value = True
     mock_listdir.return_value = [Path("valid_task")]
     mock_isdir.return_value = True
@@ -100,7 +109,7 @@ def test_verify_assets_valid(mock_isdir, mock_isfile, mock_iterdir):
     mock_isfile.return_value = True
     mock_isdir.return_value = True
 
-    assert(verify_assets(valid_assets, Path("assets"), Path("subdir_path")) == True)
+    assert(verify_assets(valid_assets, Path("assets"), Path("subdir_path")) is True)
 
 @patch.object(Path, "iterdir")
 @patch.object(Path, "is_dir")
@@ -108,7 +117,7 @@ def test_verify_assets_missing_asset(mock_isdir, mock_iterdir):
     mock_iterdir.return_value = [Path("asset1.txt")]
     mock_isdir.return_value = True
 
-    assert(verify_assets(valid_assets, Path("assets"), Path("subdir_path")) == False)
+    assert(verify_assets(valid_assets, Path("assets"), Path("subdir_path")) is False)
 
 @patch.object(Path, "iterdir")
 @patch.object(Path, "is_dir")
@@ -118,4 +127,4 @@ def test_verify_assets_unregistered_asset(mock_isdir, mock_isfile, mock_iterdir)
     mock_isfile.side_effect = True
     mock_isdir.return_value = True
 
-    assert(verify_assets(valid_assets, Path("assets"), Path("subdir_path")) == False)
+    assert(verify_assets(valid_assets, Path("assets"), Path("subdir_path")) is False)
