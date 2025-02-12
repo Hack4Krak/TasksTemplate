@@ -1,0 +1,13 @@
+name: 📋 New Task
+description: CTF task idea.
+title: "[Task]: "
+type: "ctf task"
+body:
+  - type: textarea
+    id: taskdescription
+    attributes:
+      label: Task description
+      description: Describe the task.
+      placeholder: Add a task where...
+    validations:
+      required: true
