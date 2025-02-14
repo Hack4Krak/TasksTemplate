@@ -7,4 +7,4 @@ Tasks have strictly defined files structure:
 - [`pictures/`](structure/pictures.md) - directory with icon and background pictures
 - [`src/`](structure/src.md) - source code for task implementation
 
-If you want to learn more about task configuration file, please refer to corresponding file in [documentation](structure/) directory.
+Documentation of each part of task structure is available in [documentation structure](structure/) directory.

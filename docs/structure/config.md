@@ -19,8 +19,7 @@ assets:
   - description: "Hard html game to find button"
     path: "task.html" # Path relative to `assets/`
 
-# After pressing on map icon, there will be displayed
-# a dialog with the following content
+# Dialogues for task, which will be displayed after clicking on task icon on map
 story:
   - title: "Wiedźma"
     message: "Witaj, podróżniku. Co cię sprowadza do mojego domku w lesie?"
