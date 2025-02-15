@@ -32,11 +32,6 @@ def main(
     return
 
 
-def common_options(ctx: typer.Context,tasks: Path = None):
-    tasks = tasks or typer.Option(..., "--tasks", help="Path to tasks directory")
-    ctx.obj = {"tasks_directory": tasks}
-
-
 app.command()(verify.verify)
 app.command()(summary.summary)
 app.command()(encrypt_flag.encrypt_flag)
