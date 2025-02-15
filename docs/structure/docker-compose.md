@@ -2,6 +2,10 @@
 
 This optional file is required for configuring services for tasks.
 
+> ![NOTE]
+> All paths (volumes, Dockerfile) are relative to the root of the repository.
+> You can change it by providing `--main-compose` parameter.
+
 ```yaml
 # Here you can define any service you want
 # Minecraft Server, db, simple web service etc.
