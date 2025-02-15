@@ -122,3 +122,14 @@ def test_verify_assets_unregistered_asset(mock_is_file, mock_is_dir, mock_iterdi
     mock_is_dir.return_value = True
 
     assert verify_assets(valid_assets, Path("assets"), Path("subdir_path")) is False
+
+
+@patch.object(Path, "iterdir")
+@patch.object(Path, "is_dir")
+@patch.object(Path, "is_file")
+def test_verify_assets_directory_not_found(mock_is_file, mock_is_dir, mock_iterdir, valid_assets):
+    mock_is_dir.return_value = True
+    mock_is_file.return_value = True
+    mock_iterdir.side_effect = FileNotFoundError
+
+    assert verify_assets(valid_assets, Path("assets"), Path("subdir_path")) is True
