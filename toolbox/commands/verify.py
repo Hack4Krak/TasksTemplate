@@ -16,7 +16,7 @@ def verify(context: typer.Context):
     """
     tasks_directory: Path = context.obj["tasks_directory"]
 
-    schema_path = tasks_directory / 'schema.json'
+    schema_path = tasks_directory / "schema.json"
     schema = json.loads(schema_path.read_text())
 
     valid_count = 0
@@ -24,9 +24,9 @@ def verify(context: typer.Context):
 
     rich.print("[dim]Validating tasks...")
     for subdir_path in find_tasks(tasks_directory):
-        config_path = subdir_path / 'config.yaml'
-        description_path = subdir_path / 'description.md'
-        assets_path = subdir_path / 'assets'
+        config_path = subdir_path / "config.yaml"
+        description_path = subdir_path / "description.md"
+        assets_path = subdir_path / "assets"
 
         if not config_path.is_file():
             continue
@@ -36,7 +36,7 @@ def verify(context: typer.Context):
             rich.print(f"[red]Missing description file for {subdir_path}")
             continue
 
-        yaml_data = yaml.safe_load(config_path.read_text(encoding='utf-8'))
+        yaml_data = yaml.safe_load(config_path.read_text(encoding="utf-8"))
 
         try:
             # print(yaml.sa

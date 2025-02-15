@@ -1,6 +1,6 @@
 import importlib.metadata
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 
@@ -18,15 +18,11 @@ def version_callback(is_version_parameter_set: bool):
 
 @app.callback()
 def main(
-        ctx: typer.Context,
-        _version: Annotated[
-            Optional[bool], typer.Option("--version", callback=version_callback, is_eager=True,
-                                         help="Shows app version")
-        ] = None,
-        tasks: Annotated[
-            Optional[Path],
-            typer.Option("--tasks", help="Path to tasks directory")
-        ] = Path("tasks")
+    ctx: typer.Context,
+    _version: Annotated[
+        bool | None, typer.Option("--version", callback=version_callback, is_eager=True, help="Shows app version")
+    ] = None,
+    tasks: Annotated[Path | None, typer.Option("--tasks", help="Path to tasks directory")] = Path("tasks"),
 ):
     ctx.obj = {"tasks_directory": tasks}
     return
