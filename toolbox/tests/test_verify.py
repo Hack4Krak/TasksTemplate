@@ -5,14 +5,32 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 from click.exceptions import Exit
+from rich.console import Console
 
-from toolbox.commands.verify import tasks, verify_assets
+from toolbox.commands.verify import config, tasks, verify_assets
+
+
+@pytest.fixture
+def valid_event_config():
+    return """
+    end-date: 2025-02-15T15:30:00+01:00
+    max-team-size: 5
+    start-date: 2025-02-15T8:30:00
+    """
+
+
+@pytest.fixture
+def invalid_event_config():
+    return {"event_name": "Test Event"}
 
 
 @pytest.fixture
 def mock_context():
     context = MagicMock()
-    context.obj = {"tasks_directory": Path("mocked/tasks_directory")}
+    context.obj = {
+        "tasks_directory": Path("mocked/tasks_directory"),
+        "config_directory": Path("mocked/config_directory"),
+    }
     return context
 
 
@@ -133,3 +151,12 @@ def test_verify_assets_directory_not_found(mock_is_file, mock_is_dir, mock_iterd
     mock_iterdir.side_effect = FileNotFoundError
 
     assert verify_assets(valid_assets, Path("assets"), Path("subdir_path")) is True
+
+
+@patch.object(Path, "read_text")
+def test_config_valid(mock_read_text, mock_context, valid_event_config):
+    mock_read_text.side_effect = [valid_event_config]
+
+    with patch.object(Console, "print") as mock_print:
+        config(mock_context)
+        mock_print.assert_called_with("[green]All config files are valid!", sep=" ", end="\n")

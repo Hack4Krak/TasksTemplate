@@ -26,6 +26,12 @@ uv sync
 uv run toolbox 
 ```
 
+## Architecture
+- [tasks/](tasks/) - configuration for all tasks
+- [config/](config/) - configuration for the specific CTF event
+- [toolbox/](toolbox/) - our custom CLI for working with this repository
+- [docs/](docs/) - documentation
+
 ## Stats
 
 ![Repobeats analytics image](https://repobeats.axiom.co/api/embed/302c940507d69624923aea749c322661176bed1b.svg "Repobeats analytics image")
