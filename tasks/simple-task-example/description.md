@@ -2,4 +2,5 @@
 
 ## How to do this task
 
-- use xyz technology
+- Send request to our server with `whoami.docker.localhost` `Host` header
+- Verify connection is successful
