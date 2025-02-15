@@ -1,5 +1,5 @@
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 
 def find_tasks(tasks_directory: Path) -> Generator[Path, None, None]:

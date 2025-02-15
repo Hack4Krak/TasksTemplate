@@ -36,7 +36,8 @@ test = ["pytest"]
 testpaths = ["toolbox/tests/"]
 
 [tool.ruff]
-line-length = 130
+line-length = 120
+preview = true
 
 [tool.ruff.lint]
 select = [
@@ -47,9 +48,10 @@ select = [
     "B",  # flake8-bugbear
     "C4", # flake8-comprehensions
     "N",  # PEP8 naming convetions
+    "UP", # pyupgrade (modern Python syntax)
+    "N",  # PEP8 Naming
 ]
+
 ignore = [
     "C901",  # too complex
-    "W191",  # indentation contains tabs
-    "D401"   # imperative mood
 ]

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 import rich
 import typer
@@ -12,11 +12,10 @@ app = typer.Typer()
 
 @app.callback()
 def main(
-        context: typer.Context,
-        main_compose: Annotated[
-            Optional[Path],
-            typer.Option("--main-compose", help="Path to main docker-compose.yaml")
-        ] = Path("docker-compose.yaml")
+    context: typer.Context,
+    main_compose: Annotated[
+        Path | None, typer.Option("--main-compose", help="Path to main docker-compose.yaml")
+    ] = Path("docker-compose.yaml"),
 ):
     context.ensure_object(dict)
     context.obj["main_compose"] = main_compose

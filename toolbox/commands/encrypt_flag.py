@@ -17,6 +17,6 @@ def encrypt_flag():
         if flag != flag_retype:
             rich.print("\n[red]Inputs are not the same\n")
         else:
-            encrypted_flag = hashlib.sha256(flag.encode('utf-8'))
+            encrypted_flag = hashlib.sha256(flag.encode("utf-8"))
             print(encrypted_flag.hexdigest())
             break

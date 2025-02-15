@@ -35,3 +35,6 @@ jobs:
 
       - name: Run Lint
         run: uv run ruff check
+
+      - name: Run Formatter
+        run: uv run ruff format --check
