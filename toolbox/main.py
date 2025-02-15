@@ -32,9 +32,9 @@ def main(
     return
 
 
-app.command()(verify.verify)
 app.command()(summary.summary)
 app.command()(encrypt_flag.encrypt_flag)
+app.add_typer(verify.app, name="verify", help="Verify configurations", no_args_is_help=True)
 app.add_typer(services.app, name="services", help="Start and manage services", no_args_is_help=True)
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ import pytest
 import yaml
 from click.exceptions import Exit
 
-from toolbox.commands.verify import verify, verify_assets
+from toolbox.commands.verify import tasks, verify_assets
 
 
 @pytest.fixture
@@ -81,7 +81,7 @@ def test_verify_valid(
         yaml.dump(valid_task_config)
     ]
 
-    verify(mock_context)
+    tasks(mock_context)
 
     mock_read_text.assert_called()
 
@@ -100,7 +100,7 @@ def test_verify_invalid(mock_read_text, mock_is_file, mock_is_dir, mock_iterdir,
     ]
 
     with pytest.raises(Exit):
-        verify(mock_context)
+        tasks(mock_context)
 
 
 @patch.object(Path, "iterdir")
