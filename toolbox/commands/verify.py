@@ -79,10 +79,13 @@ def verify_assets(yaml_data: dict, assets_path: Path, subdir_path: Path) -> bool
     assets = yaml_data.get("assets", [])
 
     config_assets_paths = [asset["path"] for asset in assets]
-    for asset in assets_path.iterdir():
-        if asset.is_file() and asset.name not in config_assets_paths:
-            rich.print(f"[red]Unregistered asset file {asset.name} for {subdir_path}")
-            return False
+    try:
+        for asset in assets_path.iterdir():
+            if asset.is_file() and asset.name not in config_assets_paths:
+                rich.print(f"[red]Unregistered asset file {asset.name} for {subdir_path}")
+                return False
+    except FileNotFoundError:
+        pass
     if not assets:
         return True
     if not assets_path.is_dir():
