@@ -23,8 +23,12 @@ def main(
         bool | None, typer.Option("--version", callback=version_callback, is_eager=True, help="Shows app version")
     ] = None,
     tasks: Annotated[Path | None, typer.Option("--tasks", help="Path to tasks directory")] = Path("tasks"),
+    config: Annotated[Path | None, typer.Option("--config", help="Path to configuration directory")] = Path("config"),
 ):
-    ctx.obj = {"tasks_directory": tasks}
+    ctx.obj = {
+        "tasks_directory": tasks,
+        "config_directory": config,
+    }
     return
 
 

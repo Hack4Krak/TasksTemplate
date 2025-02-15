@@ -17,6 +17,9 @@ dependencies = [
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["toolbox"]
+
 [dependency-groups]
 dev = [
     "pytest>=8.3.4",
