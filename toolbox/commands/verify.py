@@ -9,8 +9,21 @@ from jsonschema import ValidationError, validate
 
 from toolbox.utils.tasks import find_tasks
 
+app = typer.Typer()
 
-def verify(context: typer.Context):
+
+@app.command(name="all")
+def verify_all(context: typer.Context):
+    """
+    Verifies all configurations
+    """
+    tasks(context)
+
+    rich.print("[dim]Finished validating entire configuration!")
+
+
+@app.command()
+def tasks(context: typer.Context):
     """
     Verifies configuration of all tasks.
     """
