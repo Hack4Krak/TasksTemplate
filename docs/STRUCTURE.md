@@ -5,6 +5,7 @@ Tasks have strictly defined files structure:
 - [`config.yaml`](structure/config.md) - task configuration file
 - [`docker-compose.yaml`](structure/description.md) - configure deployment (*only for tasks with services*)
 - [`description.md`](structure/description.md) - task description file
+- [`solution.md`](structure/solution.md) - solution revealed after competition to users
 - [`assets/`](structure/assets.md) - directory with task assets
 - [`pictures/`](structure/pictures.md) - directory with icon and background pictures
 - [`src/`](structure/src.md) - source code for task implementation

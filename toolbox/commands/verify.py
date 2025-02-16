@@ -54,28 +54,22 @@ def tasks(context: typer.Context):
     rich.print("[dim]Validating tasks...")
     for subdir_path in find_tasks(tasks_directory):
         config_path = subdir_path / "config.yaml"
-        description_path = subdir_path / "description.md"
-        assets_path = subdir_path / "assets"
-
-        if not config_path.is_file():
-            continue
-
-        if not description_path.is_file():
-            invalid_count += 1
-            rich.print(f"[red]Missing description file for {subdir_path}")
-            continue
+        for path in ["config.yaml", "description.md", "solution.md"]:
+            if not (subdir_path / path).is_file():
+                invalid_count += 1
+                rich.print(f"[red]Missing {path} for {subdir_path}")
+                continue
 
         yaml_data = yaml.safe_load(config_path.read_text(encoding="utf-8"))
 
         try:
-            # print(yaml.sa
-            # fe_load(config_path.read_text(encoding='utf-8')))
             validate(yaml_data, schema)
         except ValidationError as error:
             invalid_count += 1
             rich.print(f"[red]Validation error in {config_path}: {error.message}")
             continue
 
+        assets_path = subdir_path / "assets"
         if not verify_assets(yaml_data, assets_path, subdir_path):
             invalid_count += 1
             continue
