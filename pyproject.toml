@@ -1,6 +1,6 @@
 [project]
 name = "hack4krak-toolbox"
-version = "1.0.0"
+version = "1.1.0"
 description = "CLI for managing tasks for Hack4Krak CTF"
 readme = "README.md"
 requires-python = ">=3.12"
