@@ -62,6 +62,12 @@ def tasks(context: typer.Context):
 
         yaml_data = yaml.safe_load(config_path.read_text(encoding="utf-8"))
 
+        task_id = yaml_data.get("id", "")
+        if task_id != subdir_path.name:
+            invalid_count += 1
+            rich.print(f"[red]Task id is different than task directory name {subdir_path.name} for {task_id}")
+            continue
+
         try:
             validate(yaml_data, schema)
         except ValidationError as error:

@@ -38,19 +38,19 @@ def mock_context():
 def valid_schema():
     return {
         "type": "object",
-        "properties": {"task_name": {"type": "string"}, "enabled": {"type": "boolean"}},
-        "required": ["task_name", "enabled"],
+        "properties": {"id": {"type": "string"}, "enabled": {"type": "boolean"}},
+        "required": ["id", "enabled"],
     }
 
 
 @pytest.fixture
 def valid_task_config():
-    return {"task_name": "Task 1", "enabled": True}
+    return {"id": "valid_task", "enabled": True}
 
 
 @pytest.fixture
 def invalid_task_config():
-    return {"task_name": "Task 1"}
+    return {"id": "invalid_task"}
 
 
 @pytest.fixture
@@ -100,6 +100,22 @@ def test_verify_valid(
 @patch.object(Path, "is_file")
 @patch.object(Path, "read_text")
 def test_verify_invalid(
+    mock_read_text, mock_is_file, mock_is_dir, mock_iterdir, mock_context, valid_schema, invalid_task_config
+):
+    mock_iterdir.return_value = [Path("invalid_task")]
+    mock_is_dir.return_value = True
+    mock_is_file.return_value = True
+    mock_read_text.side_effect = [json.dumps(valid_schema), yaml.dump(invalid_task_config)]
+
+    with pytest.raises(Exit):
+        tasks(mock_context)
+
+
+@patch.object(Path, "iterdir")
+@patch.object(Path, "is_dir")
+@patch.object(Path, "is_file")
+@patch.object(Path, "read_text")
+def test_verify_invalid_dir_name(
     mock_read_text, mock_is_file, mock_is_dir, mock_iterdir, mock_context, valid_schema, invalid_task_config
 ):
     mock_iterdir.return_value = [Path("invalid_task")]
