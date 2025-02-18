@@ -2,7 +2,7 @@
 
 This optional file is required for configuring services for tasks.
 
-> ![NOTE]
+> [!NOTE]
 > All paths (volumes, Dockerfile) are relative to the root of the repository.
 > You can change it by providing `--main-compose` parameter.
 
