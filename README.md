@@ -11,6 +11,10 @@ It is parsed directly by [our website](https://github.com/Hack4Krak/Hack4KrakSit
 
 The repository includes basic tools for verifying, parsing, and task creation.
 
+> [!IMPORTANT]
+> Workflows by default don't run on pull request from forks on private repositories. To enable them edit your organization settings.
+> Refer to [GitHub documentation](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#enabling-workflows-for-forks-of-private-repositories) for more information.
+
 For more information check out [our documentation](docs/)!
 
 ## Development
