@@ -4,7 +4,7 @@ from typing import Annotated
 
 import typer
 
-from toolbox.commands import encrypt_flag, services, summary, verify
+from toolbox.commands import hash_flag, services, summary, verify
 
 app = typer.Typer(name="Hack4Krak Toolbox", help="CLI for managing tasks for Hack4Krak CTF", no_args_is_help=True)
 
@@ -33,7 +33,7 @@ def main(
 
 
 app.command()(summary.summary)
-app.command()(encrypt_flag.encrypt_flag)
+app.command()(hash_flag.hash_flag)
 app.add_typer(verify.app, name="verify", help="Verify configurations", no_args_is_help=True)
 app.add_typer(services.app, name="services", help="Start and manage services", no_args_is_help=True)
 
