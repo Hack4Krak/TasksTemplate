@@ -9,7 +9,7 @@ id: "simple-task-example"
 # Display name for users
 name: "Simple Task Example"
 # Hashed flag content (without `hack4KrakCTF{}` around)
-# For easier development you can use `toolbox encrypt-flag` script
+# For easier development you can use `toolbox hash-flag` script
 flag_hash: "1912766d6ba0e50e8b1bacfb51207e83b95b7ac0cd8ce15307cdf4965e7e3f6c"
 
 
