@@ -7,7 +7,7 @@ import yaml
 from click.exceptions import Exit
 from rich.console import Console
 
-from toolbox.commands.verify import config, tasks, verify_assets
+from toolbox.commands.verify import config, tasks, verify_assets, verify_pictures
 
 
 @pytest.fixture
@@ -74,7 +74,9 @@ def valid_assets():
 @patch.object(Path, "is_file")
 @patch.object(Path, "read_text")
 @patch("toolbox.commands.verify.verify_assets")
+@patch("toolbox.commands.verify.verify_pictures")
 def test_verify_valid(
+    mock_verify_pictures,
     mock_verify_assets,
     mock_read_text,
     mock_is_file,
@@ -84,6 +86,7 @@ def test_verify_valid(
     valid_schema,
     valid_task_config,
 ):
+    mock_verify_pictures.return_value = True
     mock_verify_assets.return_value = True
     mock_iterdir.return_value = [Path("valid_task")]
     mock_is_dir.return_value = True
@@ -176,3 +179,17 @@ def test_config_valid(mock_read_text, mock_context, valid_event_config):
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
         mock_print.assert_called_with("[green]All config files are valid!", sep=" ", end="\n")
+
+
+@patch.object(Path, "is_file")
+def test_valid_verify_pictures(mock_is_file):
+    mock_is_file.return_value = True
+
+    assert verify_pictures(Path("assets")) is True
+
+
+@patch.object(Path, "is_file")
+def test_missing_verify_pictures(mock_is_file):
+    mock_is_file.return_value = False
+
+    assert verify_pictures(Path("assets")) is False
