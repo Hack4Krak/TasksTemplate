@@ -80,6 +80,10 @@ def tasks(context: typer.Context):
             invalid_count += 1
             continue
 
+        if not verify_pictures(subdir_path / "pictures"):
+            invalid_count += 1
+            continue
+
         valid_count += 1
 
     total_tasks = valid_count + invalid_count
@@ -112,6 +116,17 @@ def verify_assets(yaml_data: dict, assets_path: Path, subdir_path: Path) -> bool
         asset_path = assets_path / str(asset["path"])
         if not asset_path.is_file():
             rich.print(f"[red]Missing asset file {asset} for {subdir_path}")
+            return False
+
+    return True
+
+
+def verify_pictures(subdir_path: Path) -> bool:
+    required_pictures = ["background.png", "icon.png"]
+    for picture in required_pictures:
+        picture_path = subdir_path.joinpath(picture)
+        if not picture_path.is_file():
+            rich.print(f"[red]Missing file pictures/{picture} for {subdir_path}")
             return False
 
     return True
