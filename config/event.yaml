@@ -1,6 +1,8 @@
 # TasksTemplate configuration
 
-# Date and time when CTF starts (users have access to tasks etc)
+# Unique identifier for the event
+id: tasks-template
+# Date and time when CTF starts (users have access to tasks etc.)
 start-date: 2025-02-15T8:30:00+01:00
 # After this date users can't upload more flags
 end-date: 2025-02-15T15:30:00+01:00
