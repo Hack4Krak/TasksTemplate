@@ -7,7 +7,7 @@ import yaml
 from click.exceptions import Exit
 from jsonschema import ValidationError, validate
 
-from toolbox.utils.config import EventConfig
+from toolbox.utils.config import EventConfig, RegistrationConfig
 from toolbox.utils.tasks import find_tasks
 
 app = typer.Typer()
@@ -33,6 +33,7 @@ def config(context: typer.Context):
 
     try:
         EventConfig.from_file(config_directory)
+        RegistrationConfig.from_file(config_directory)
         rich.print("[green]All config files are valid!")
     except Exception as exception:
         rich.print(f"[red]event.yaml config is invalid: {exception}")
