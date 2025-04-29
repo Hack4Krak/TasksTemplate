@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 
 class EventConfig(BaseModel):
+    id: str
     start_date: datetime = Field(..., alias="start-date")
     end_date: datetime = Field(..., alias="end-date")
 
