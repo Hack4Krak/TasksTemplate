@@ -13,9 +13,19 @@ from toolbox.commands.verify import config, tasks, verify_assets, verify_picture
 @pytest.fixture
 def valid_event_config():
     return """
+    id: tasks
     end-date: 2025-02-15T15:30:00+01:00
-    max-team-size: 5
     start-date: 2025-02-15T8:30:00
+    """
+
+
+@pytest.fixture
+def valid_registration_config():
+    return """
+    start-date: 2025-01-01T8:30:00+01:00
+    end-date: 2025-02-14T23:59:59+01:00
+    max-team-size: 5
+    registration-mode: internal
     """
 
 
@@ -173,8 +183,8 @@ def test_verify_assets_directory_not_found(mock_is_file, mock_is_dir, mock_iterd
 
 
 @patch.object(Path, "read_text")
-def test_config_valid(mock_read_text, mock_context, valid_event_config):
-    mock_read_text.side_effect = [valid_event_config]
+def test_config_valid(mock_read_text, mock_context, valid_event_config, valid_registration_config):
+    mock_read_text.side_effect = [valid_event_config, valid_registration_config]
 
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
