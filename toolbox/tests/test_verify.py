@@ -135,7 +135,7 @@ def test_verify_invalid(
 def test_verify_invalid_dir_name(
     mock_read_text, mock_is_file, mock_is_dir, mock_iterdir, mock_context, valid_schema, invalid_task_config
 ):
-    mock_iterdir.return_value = [Path("invalid_task")]
+    mock_iterdir.return_value = [Path("invalid_task_dir")]
     mock_is_dir.return_value = True
     mock_is_file.return_value = True
     mock_read_text.side_effect = [json.dumps(valid_schema), yaml.dump(invalid_task_config)]
