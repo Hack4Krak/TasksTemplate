@@ -48,14 +48,18 @@ def mock_context():
 def valid_schema():
     return {
         "type": "object",
-        "properties": {"id": {"type": "string"}, "enabled": {"type": "boolean"}},
+        "properties": {
+            "id": {"type": "string"},
+            "enabled": {"type": "boolean"},
+            "difficulty_estimate": {"type": "string"},
+        },
         "required": ["id", "enabled"],
     }
 
 
 @pytest.fixture
 def valid_task_config():
-    return {"id": "valid_task", "enabled": True}
+    return {"id": "valid_task", "enabled": True, "difficulty_estimate": "easy"}
 
 
 @pytest.fixture
@@ -135,6 +139,23 @@ def test_verify_invalid_dir_name(
     mock_is_dir.return_value = True
     mock_is_file.return_value = True
     mock_read_text.side_effect = [json.dumps(valid_schema), yaml.dump(invalid_task_config)]
+
+    with pytest.raises(Exit):
+        tasks(mock_context)
+
+
+@patch.object(Path, "iterdir")
+@patch.object(Path, "is_dir")
+@patch.object(Path, "is_file")
+@patch.object(Path, "read_text")
+def test_verify_invalid_difficulty(
+    mock_read_text, mock_is_file, mock_is_dir, mock_iterdir, mock_context, valid_schema, valid_task_config
+):
+    valid_task_config["difficulty_estimation"] = "Dziengiel"
+    mock_iterdir.return_value = [Path("valid_task")]
+    mock_is_dir.return_value = True
+    mock_is_file.return_value = True
+    mock_read_text.side_effect = [json.dumps(valid_schema), yaml.dump(valid_task_config)]
 
     with pytest.raises(Exit):
         tasks(mock_context)

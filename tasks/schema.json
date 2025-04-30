@@ -11,6 +11,10 @@
     "flag_hash": {
       "type": "string"
     },
+    "difficulty_estimate": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"]
+    },
     "assets": {
       "type": "array",
       "items": {
@@ -60,5 +64,5 @@
       "required": ["icon_coordinates"]
     }
   },
-  "required": ["id", "name", "flag_hash", "story", "display"]
+  "required": ["id", "name", "flag_hash", "difficulty_estimate", "story", "display"]
 }
