@@ -11,6 +11,9 @@ name: "Simple Task Example"
 # Hashed flag content (without `hack4KrakCTF{}` around)
 # For easier development you can use `toolbox hash-flag` script
 flag_hash: "1912766d6ba0e50e8b1bacfb51207e83b95b7ac0cd8ce15307cdf4965e7e3f6c"
+# Difficulty estimate of the task. 
+# It doesn't affect points, it's just suggestion for participants
+difficulty_estimation: "easy"
 
 
 # All assets for tasks have to be registered here

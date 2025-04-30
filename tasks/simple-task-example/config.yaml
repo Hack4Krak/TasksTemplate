@@ -3,6 +3,7 @@ $schema: "../schema.json"
 id: "simple-task-example"
 name: "Simple Task Example"
 flag_hash: "1912766d6ba0e50e8b1bacfb51207e83b95b7ac0cd8ce15307cdf4965e7e3f6c"
+difficulty_estimate: "easy"
 
 assets:
   - description: "Hard html game to find button"
