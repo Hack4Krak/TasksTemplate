@@ -18,8 +18,7 @@
     "labels": {
       "type": "array",
       "items": {
-        "type": "string",
-        "enum": ["PWN", "Web", "Reverse Engineering", "Cryptography", "Partner", "Games", "Misc"]
+        "type": "string"
       }
     },
     "assets": {
