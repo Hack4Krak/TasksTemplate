@@ -18,6 +18,7 @@ def verify_all(context: typer.Context):
     """
     Verifies all configurations
     """
+    labels(context)
     tasks(context)
     config(context)
 
@@ -38,6 +39,42 @@ def config(context: typer.Context):
     except Exception as exception:
         rich.print(f"[red]event.yaml config is invalid: {exception}")
 
+@app.command()
+def labels(context: typer.Context):
+    """
+    Verifies all files in labels directory
+    """
+    config_directory: Path = context.obj["config_directory"]
+
+    schema_path = config_directory / "labels_schema.json"
+    schema = json.loads(schema_path.read_text())
+
+    labels_data_path = config_directory / "labels.yaml"
+    labels_icon_dir = config_directory / "assets/labels"
+    label_icons = [str(i.name).removesuffix(str(i.suffix)).lower() for i in labels_icon_dir.iterdir()]
+    yaml_data = yaml.safe_load(labels_data_path.read_text(encoding="utf-8"))
+
+    try:
+        validate(yaml_data, schema)
+
+        rich.print("[green]Labels config is valid!")
+
+        invalid_count = 0
+        for label in yaml_data["labels"]:
+            if label["name"].lower() not in label_icons:
+                invalid_count += 1
+                rich.print(f"[red]Missing icon file for label {label['name']}")
+                continue
+
+        if invalid_count > 0:
+            rich.print(f"[red]{invalid_count} labels are invalid.")
+            raise Exit(code=1)
+
+        rich.print(f"[green]All labels are valid!")
+
+    except Exception as exception:
+        rich.print(f"[red]Labels config file is invalid: {exception}")
+        raise Exit(code=1)
 
 @app.command()
 def tasks(context: typer.Context):

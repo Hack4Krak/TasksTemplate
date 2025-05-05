@@ -15,6 +15,13 @@
       "type": "string",
       "enum": ["easy", "medium", "hard"]
     },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["PWN", "Web", "Reverse Engineering", "Cryptography", "Partner", "Games", "Misc"]
+      }
+    },
     "assets": {
       "type": "array",
       "items": {
@@ -64,5 +71,5 @@
       "required": ["icon_coordinates"]
     }
   },
-  "required": ["id", "name", "flag_hash", "difficulty_estimate", "story", "display"]
+  "required": ["id", "name", "flag_hash", "difficulty_estimate", "labels", "story", "display"]
 }

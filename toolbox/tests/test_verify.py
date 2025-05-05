@@ -7,7 +7,7 @@ import yaml
 from click.exceptions import Exit
 from rich.console import Console
 
-from toolbox.commands.verify import config, tasks, verify_assets, verify_pictures
+from toolbox.commands.verify import config, tasks, verify_assets, verify_pictures, labels
 
 
 @pytest.fixture
@@ -18,6 +18,43 @@ def valid_event_config():
     start-date: 2025-02-15T8:30:00
     """
 
+@pytest.fixture
+def valid_labels_config():
+    return {
+        "labels": [
+            {
+                "name": "PWN",
+                "description": "PWN",
+            }
+        ]
+    }
+
+@pytest.fixture
+def invalid_labels_config():
+    return {
+        "dziengiel": [
+            {
+                "description": "Sell 1000 dziengiels to get flag",
+                "icon": "dziengiel.webp",
+            }
+        ]
+    }
+
+@pytest.fixture
+def labels_schema():
+    return {
+        "type": "object",
+        "properties": {
+            "labels": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {"name": {"type": "string"}, "description": {"type": "string"}},
+                    "required": ["name", "description"],
+                },
+            }
+        },
+    }
 
 @pytest.fixture
 def valid_registration_config():
@@ -211,6 +248,33 @@ def test_config_valid(mock_read_text, mock_context, valid_event_config, valid_re
         config(mock_context)
         mock_print.assert_called_with("[green]All config files are valid!", sep=" ", end="\n")
 
+@patch.object(Path, "read_text")
+@patch.object(Path, "iterdir")
+def test_labels_valid(mock_iterdir, mock_read_text, mock_context, valid_labels_config, labels_schema):
+    mock_iterdir.return_value = [Path("pwn.png")]
+    mock_read_text.side_effect = [json.dumps(labels_schema), yaml.dump(valid_labels_config)]
+
+    with patch.object(Console, "print") as mock_print:
+        labels(mock_context)
+        mock_print.assert_called_with("[green]All labels are valid!", sep=" ", end="\n")
+
+@patch.object(Path, "read_text")
+@patch.object(Path, "iterdir")
+def test_labels_invalid_config(mock_iterdir, mock_read_text, mock_context, invalid_labels_config, labels_schema):
+    mock_read_text.side_effect = [json.dumps(labels_schema), yaml.dump(invalid_labels_config)]
+    mock_iterdir.return_value = []
+
+    with pytest.raises(Exit):
+        labels(mock_context)
+
+@patch.object(Path, "read_text")
+@patch.object(Path, "iterdir")
+def test_labels_missing_icons(mock_iterdir, mock_read_text, mock_context, valid_labels_config, labels_schema):
+    mock_read_text.side_effect = [json.dumps(labels_schema), yaml.dump(valid_labels_config)]
+    mock_iterdir.return_value = []
+
+    with pytest.raises(Exit):
+        labels(mock_context)
 
 @patch.object(Path, "is_file")
 def test_valid_verify_pictures(mock_is_file):
