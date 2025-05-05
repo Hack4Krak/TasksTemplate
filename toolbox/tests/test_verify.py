@@ -57,6 +57,7 @@ def labels_schema():
                 },
             }
         },
+        "required": ["labels"],
     }
 
 

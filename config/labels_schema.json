@@ -17,5 +17,6 @@
             "required": ["name", "description"]
         }
     }
-  }
+  },
+  "required": ["labels"]
 }
