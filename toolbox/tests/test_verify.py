@@ -7,7 +7,7 @@ import yaml
 from click.exceptions import Exit
 from rich.console import Console
 
-from toolbox.commands.verify import config, tasks, verify_assets, verify_pictures, labels
+from toolbox.commands.verify import config, labels, tasks, verify_assets, verify_pictures
 
 
 @pytest.fixture
@@ -17,6 +17,7 @@ def valid_event_config():
     end-date: 2025-02-15T15:30:00+01:00
     start-date: 2025-02-15T8:30:00
     """
+
 
 @pytest.fixture
 def valid_labels_config():
@@ -29,6 +30,7 @@ def valid_labels_config():
         ]
     }
 
+
 @pytest.fixture
 def invalid_labels_config():
     return {
@@ -39,6 +41,7 @@ def invalid_labels_config():
             }
         ]
     }
+
 
 @pytest.fixture
 def labels_schema():
@@ -55,6 +58,7 @@ def labels_schema():
             }
         },
     }
+
 
 @pytest.fixture
 def valid_registration_config():
@@ -248,6 +252,7 @@ def test_config_valid(mock_read_text, mock_context, valid_event_config, valid_re
         config(mock_context)
         mock_print.assert_called_with("[green]All config files are valid!", sep=" ", end="\n")
 
+
 @patch.object(Path, "read_text")
 @patch.object(Path, "iterdir")
 def test_labels_valid(mock_iterdir, mock_read_text, mock_context, valid_labels_config, labels_schema):
@@ -258,6 +263,7 @@ def test_labels_valid(mock_iterdir, mock_read_text, mock_context, valid_labels_c
         labels(mock_context)
         mock_print.assert_called_with("[green]All labels are valid!", sep=" ", end="\n")
 
+
 @patch.object(Path, "read_text")
 @patch.object(Path, "iterdir")
 def test_labels_invalid_config(mock_iterdir, mock_read_text, mock_context, invalid_labels_config, labels_schema):
@@ -267,6 +273,7 @@ def test_labels_invalid_config(mock_iterdir, mock_read_text, mock_context, inval
     with pytest.raises(Exit):
         labels(mock_context)
 
+
 @patch.object(Path, "read_text")
 @patch.object(Path, "iterdir")
 def test_labels_missing_icons(mock_iterdir, mock_read_text, mock_context, valid_labels_config, labels_schema):
@@ -275,6 +282,7 @@ def test_labels_missing_icons(mock_iterdir, mock_read_text, mock_context, valid_
 
     with pytest.raises(Exit):
         labels(mock_context)
+
 
 @patch.object(Path, "is_file")
 def test_valid_verify_pictures(mock_is_file):
