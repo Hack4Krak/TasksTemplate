@@ -1,10 +1,14 @@
 $schema: "labels_schema.json"
 
+# This file defines the labels used in the project.
+# Labels are used to categorize tasks based on their type.
 labels:
-  - name: "PWN"
+  - # Label name which is displayed in the UI.
+    name: "PWN"
+    # Unique identifier for the label, which is used in code and as name for icon.
     id: "pwn"
+    # Description of the label, which is displayed in the UI.
     description: "Exploit binary vulnerabilities to gain control or execute unintended actions."
   - name: "Web"
     id: "web"
     description: "Exploit web application vulnerabilities to gain unauthorized access or manipulate data."
-
