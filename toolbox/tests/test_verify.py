@@ -25,6 +25,7 @@ def valid_labels_config():
         "labels": [
             {
                 "name": "PWN",
+                "id": "pwn",
                 "description": "PWN",
             }
         ]

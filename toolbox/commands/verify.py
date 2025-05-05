@@ -66,9 +66,9 @@ def labels(context: typer.Context):
 
     invalid_count = 0
     for label in yaml_data["labels"]:
-        if label["name"].lower() not in label_icons:
+        if label["id"] not in label_icons:
             invalid_count += 1
-            rich.print(f"[red]Missing icon file for label {label['name']}")
+            rich.print(f"[red]Missing icon file for label id: {label['id']}")
             continue
 
     if invalid_count > 0:

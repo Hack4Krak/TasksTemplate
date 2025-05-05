@@ -1,15 +1,10 @@
+$schema: "labels_schema.json"
+
 labels:
   - name: "PWN"
+    id: "pwn"
     description: "Exploit binary vulnerabilities to gain control or execute unintended actions."
   - name: "Web"
+    id: "web"
     description: "Exploit web application vulnerabilities to gain unauthorized access or manipulate data."
-  - name: "Reverse Engineering"
-    description: "Analyze and deconstruct software to understand its functionality or find vulnerabilities."
-  - name: "Cryptography"
-    description: "Study and exploit cryptographic systems to break encryption or manipulate data."
-  - name: "Partner"
-    description: "Tasks designed by our partners!"
-  - name: "Games"
-    description: "Exploit game vulnerabilities to gain advantages or manipulate game mechanics."
-  - name: "Misc"
-    description: "Miscellaneous tasks that don't fit into other categories."
+

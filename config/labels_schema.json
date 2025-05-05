@@ -10,6 +10,9 @@
               "name": {
                   "type": "string"
               },
+              "id": {
+                  "type": "string"
+              },
               "description": {
                   "type": "string"
               }
