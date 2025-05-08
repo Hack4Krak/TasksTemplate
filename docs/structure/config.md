@@ -14,6 +14,11 @@ flag_hash: "1912766d6ba0e50e8b1bacfb51207e83b95b7ac0cd8ce15307cdf4965e7e3f6c"
 # Difficulty estimate of the task. 
 # It doesn't affect points, it's just suggestion for participants
 difficulty_estimation: "easy"
+# Task types labels. Labels are used to categorize tasks based on their type.
+# Labels are defined in `config/labels.yaml` file.
+# Label icons are defined in `config/assets/labels/` file, they should have same name as label id.
+labels:
+  - "web"
 
 
 # All assets for tasks have to be registered here

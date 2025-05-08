@@ -15,6 +15,12 @@
       "type": "string",
       "enum": ["easy", "medium", "hard"]
     },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "assets": {
       "type": "array",
       "items": {
@@ -64,5 +70,5 @@
       "required": ["icon_coordinates"]
     }
   },
-  "required": ["id", "name", "flag_hash", "difficulty_estimate", "story", "display"]
+  "required": ["id", "name", "flag_hash", "difficulty_estimate", "labels", "story", "display"]
 }
