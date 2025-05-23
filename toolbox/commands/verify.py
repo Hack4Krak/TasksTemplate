@@ -7,7 +7,7 @@ import yaml
 from click.exceptions import Exit
 from jsonschema import ValidationError, validate
 
-from toolbox.utils.config import EventConfig, RegistrationConfig
+from toolbox.utils.config import EventConfig, LabelsConfig, RegistrationConfig
 from toolbox.utils.tasks import find_tasks
 
 app = typer.Typer()
@@ -18,9 +18,9 @@ def verify_all(context: typer.Context):
     """
     Verifies all configurations
     """
+    config(context)
     labels(context)
     tasks(context)
-    config(context)
 
     rich.print("[dim]Finished validating entire configuration!")
 
@@ -47,32 +47,29 @@ def labels(context: typer.Context):
     """
     config_directory: Path = context.obj["config_directory"]
 
-    schema_path = config_directory / "labels_schema.json"
-    schema = json.loads(schema_path.read_text())
-
-    labels_data_path = config_directory / "labels.yaml"
     labels_icon_dir = config_directory / "assets/labels"
     label_icons = [str(i.name).removesuffix(str(i.suffix)).lower() for i in labels_icon_dir.iterdir()]
-    yaml_data = yaml.safe_load(labels_data_path.read_text(encoding="utf-8"))
 
     try:
-        validate(yaml_data, schema)
-
+        labels_config = LabelsConfig.from_file(config_directory)
+        rich.print("[green]Labels config is valid!")
     except Exception as exception:
         rich.print(f"[red]Labels config file is invalid: {exception}")
         raise Exit(code=1) from None
 
-    rich.print("[green]Labels config is valid!")
-
     invalid_count = 0
-    for label in yaml_data["labels"]:
-        if label["id"] not in label_icons:
+    for label in labels_config.labels:
+        if label.id not in label_icons:
             invalid_count += 1
-            rich.print(f"[red]Missing icon file for label id: {label['id']}")
+            rich.print(f"[red]Missing icon file for label id: {label.id}")
             continue
 
     if invalid_count > 0:
         rich.print(f"[red]{invalid_count} labels have missing icons!")
+        raise Exit(code=1)
+
+    if len(label_icons) != len(labels_config.labels):
+        rich.print("[red]Label icons do not match the number of labels!")
         raise Exit(code=1)
 
     rich.print("[green]All labels are valid!")
@@ -84,6 +81,8 @@ def tasks(context: typer.Context):
     Verifies configuration of all tasks.
     """
     tasks_directory: Path = context.obj["tasks_directory"]
+    config_directory: Path = context.obj["config_directory"]
+    labels_config = [label.id for label in LabelsConfig.from_file(config_directory).labels]
 
     schema_path = tasks_directory / "schema.json"
     schema = json.loads(schema_path.read_text())
@@ -123,6 +122,13 @@ def tasks(context: typer.Context):
         if not verify_pictures(subdir_path / "pictures"):
             invalid_count += 1
             continue
+
+        labels_in_task = yaml_data.get("labels")
+        for label in labels_in_task:
+            if label not in labels_config:
+                rich.print(f"[red]Invalid label format in task {subdir_path}: {label}")
+                invalid_count += 1
+                continue
 
         valid_count += 1
 
