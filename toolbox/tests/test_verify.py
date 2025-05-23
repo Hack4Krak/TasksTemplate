@@ -45,24 +45,6 @@ def invalid_labels_config():
 
 
 @pytest.fixture
-def labels_schema():
-    return {
-        "type": "object",
-        "properties": {
-            "labels": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {"name": {"type": "string"}, "description": {"type": "string"}},
-                    "required": ["name", "description"],
-                },
-            }
-        },
-        "required": ["labels"],
-    }
-
-
-@pytest.fixture
 def valid_registration_config():
     return """
     start-date: 2025-01-01T8:30:00+01:00
@@ -93,7 +75,7 @@ def valid_schema():
         "type": "object",
         "properties": {
             "id": {"type": "string"},
-            "enabled": {"type": "boolean"},
+            "labels": {"type": "array", "items": {"type": "string"}},
             "difficulty_estimate": {"type": "string"},
         },
         "required": ["id", "enabled"],
@@ -102,7 +84,7 @@ def valid_schema():
 
 @pytest.fixture
 def valid_task_config():
-    return {"id": "valid_task", "enabled": True, "difficulty_estimate": "easy"}
+    return {"id": "valid_task", "enabled": True, "difficulty_estimate": "easy", "labels": ["pwn"]}
 
 
 @pytest.fixture
@@ -142,13 +124,18 @@ def test_verify_valid(
     mock_context,
     valid_schema,
     valid_task_config,
+    valid_labels_config,
 ):
     mock_verify_pictures.return_value = True
     mock_verify_assets.return_value = True
     mock_iterdir.return_value = [Path("valid_task")]
     mock_is_dir.return_value = True
     mock_is_file.return_value = True
-    mock_read_text.side_effect = [json.dumps(valid_schema), yaml.dump(valid_task_config)]
+    mock_read_text.side_effect = [
+        yaml.dump(valid_labels_config),
+        json.dumps(valid_schema),
+        yaml.dump(valid_task_config),
+    ]
 
     tasks(mock_context)
 
@@ -160,12 +147,23 @@ def test_verify_valid(
 @patch.object(Path, "is_file")
 @patch.object(Path, "read_text")
 def test_verify_invalid(
-    mock_read_text, mock_is_file, mock_is_dir, mock_iterdir, mock_context, valid_schema, invalid_task_config
+    mock_read_text,
+    mock_is_file,
+    mock_is_dir,
+    mock_iterdir,
+    mock_context,
+    valid_schema,
+    invalid_task_config,
+    valid_labels_config,
 ):
     mock_iterdir.return_value = [Path("invalid_task")]
     mock_is_dir.return_value = True
     mock_is_file.return_value = True
-    mock_read_text.side_effect = [json.dumps(valid_schema), yaml.dump(invalid_task_config)]
+    mock_read_text.side_effect = [
+        yaml.dump(valid_labels_config),
+        json.dumps(valid_schema),
+        yaml.dump(invalid_task_config),
+    ]
 
     with pytest.raises(Exit):
         tasks(mock_context)
@@ -176,12 +174,23 @@ def test_verify_invalid(
 @patch.object(Path, "is_file")
 @patch.object(Path, "read_text")
 def test_verify_invalid_dir_name(
-    mock_read_text, mock_is_file, mock_is_dir, mock_iterdir, mock_context, valid_schema, invalid_task_config
+    mock_read_text,
+    mock_is_file,
+    mock_is_dir,
+    mock_iterdir,
+    mock_context,
+    valid_schema,
+    invalid_task_config,
+    valid_labels_config,
 ):
     mock_iterdir.return_value = [Path("invalid_task_dir")]
     mock_is_dir.return_value = True
     mock_is_file.return_value = True
-    mock_read_text.side_effect = [json.dumps(valid_schema), yaml.dump(invalid_task_config)]
+    mock_read_text.side_effect = [
+        yaml.dump(valid_labels_config),
+        json.dumps(valid_schema),
+        yaml.dump(invalid_task_config),
+    ]
 
     with pytest.raises(Exit):
         tasks(mock_context)
@@ -192,13 +201,24 @@ def test_verify_invalid_dir_name(
 @patch.object(Path, "is_file")
 @patch.object(Path, "read_text")
 def test_verify_invalid_difficulty(
-    mock_read_text, mock_is_file, mock_is_dir, mock_iterdir, mock_context, valid_schema, valid_task_config
+    mock_read_text,
+    mock_is_file,
+    mock_is_dir,
+    mock_iterdir,
+    mock_context,
+    valid_schema,
+    valid_task_config,
+    valid_labels_config,
 ):
     valid_task_config["difficulty_estimation"] = "Dziengiel"
     mock_iterdir.return_value = [Path("valid_task")]
     mock_is_dir.return_value = True
     mock_is_file.return_value = True
-    mock_read_text.side_effect = [json.dumps(valid_schema), yaml.dump(valid_task_config)]
+    mock_read_text.side_effect = [
+        yaml.dump(valid_labels_config),
+        json.dumps(valid_schema),
+        yaml.dump(valid_task_config),
+    ]
 
     with pytest.raises(Exit):
         tasks(mock_context)
@@ -257,9 +277,9 @@ def test_config_valid(mock_read_text, mock_context, valid_event_config, valid_re
 
 @patch.object(Path, "read_text")
 @patch.object(Path, "iterdir")
-def test_labels_valid(mock_iterdir, mock_read_text, mock_context, valid_labels_config, labels_schema):
+def test_labels_valid(mock_iterdir, mock_read_text, mock_context, valid_labels_config):
     mock_iterdir.return_value = [Path("pwn.png")]
-    mock_read_text.side_effect = [json.dumps(labels_schema), yaml.dump(valid_labels_config)]
+    mock_read_text.side_effect = [yaml.dump(valid_labels_config)]
 
     with patch.object(Console, "print") as mock_print:
         labels(mock_context)
@@ -268,8 +288,8 @@ def test_labels_valid(mock_iterdir, mock_read_text, mock_context, valid_labels_c
 
 @patch.object(Path, "read_text")
 @patch.object(Path, "iterdir")
-def test_labels_invalid_config(mock_iterdir, mock_read_text, mock_context, invalid_labels_config, labels_schema):
-    mock_read_text.side_effect = [json.dumps(labels_schema), yaml.dump(invalid_labels_config)]
+def test_labels_invalid_config(mock_iterdir, mock_read_text, mock_context, invalid_labels_config):
+    mock_read_text.side_effect = [yaml.dump(invalid_labels_config)]
     mock_iterdir.return_value = []
 
     with pytest.raises(Exit):
@@ -278,8 +298,8 @@ def test_labels_invalid_config(mock_iterdir, mock_read_text, mock_context, inval
 
 @patch.object(Path, "read_text")
 @patch.object(Path, "iterdir")
-def test_labels_missing_icons(mock_iterdir, mock_read_text, mock_context, valid_labels_config, labels_schema):
-    mock_read_text.side_effect = [json.dumps(labels_schema), yaml.dump(valid_labels_config)]
+def test_labels_missing_icons(mock_iterdir, mock_read_text, mock_context, valid_labels_config):
+    mock_read_text.side_effect = [yaml.dump(valid_labels_config)]
     mock_iterdir.return_value = []
 
     with pytest.raises(Exit):

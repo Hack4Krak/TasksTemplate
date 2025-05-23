@@ -31,3 +31,20 @@ class RegistrationConfig(BaseModel):
         config = yaml.load(config_directory.read_text(), Loader=yaml.FullLoader)
 
         return RegistrationConfig(**config)
+
+
+class Label(BaseModel):
+    id: str
+    name: str
+    description: str
+
+
+class LabelsConfig(BaseModel):
+    labels: list[Label]
+
+    @staticmethod
+    def from_file(config_directory: Path):
+        config_directory = config_directory / "labels.yaml"
+        config = yaml.load(config_directory.read_text(), Loader=yaml.FullLoader)
+
+        return LabelsConfig(**config)
