@@ -33,8 +33,8 @@ def config(context: typer.Context):
     config_directory: Path = context.obj["config_directory"]
 
     try:
-        EventConfig.from_file(config_directory)
-        RegistrationConfig.from_file(config_directory)
+        EventConfig.from_config_directory(config_directory)
+        RegistrationConfig.from_config_directory(config_directory)
         rich.print("[green]All config files are valid!")
     except Exception as exception:
         rich.print(f"[red]event.yaml config is invalid: {exception}")
@@ -51,7 +51,7 @@ def labels(context: typer.Context):
     label_icons = [str(i.name).removesuffix(str(i.suffix)).lower() for i in labels_icon_dir.iterdir()]
 
     try:
-        labels_config = LabelsConfig.from_file(config_directory)
+        labels_config = LabelsConfig.from_config_directory(config_directory)
         rich.print("[green]Labels config is valid!")
     except Exception as exception:
         rich.print(f"[red]Labels config file is invalid: {exception}")
@@ -82,7 +82,7 @@ def tasks(context: typer.Context):
     """
     tasks_directory: Path = context.obj["tasks_directory"]
     config_directory: Path = context.obj["config_directory"]
-    labels_config = [label.id for label in LabelsConfig.from_file(config_directory).labels]
+    labels_config = [label.id for label in LabelsConfig.from_config_directory(config_directory).labels]
 
     schema_path = tasks_directory / "schema.json"
     schema = json.loads(schema_path.read_text())
