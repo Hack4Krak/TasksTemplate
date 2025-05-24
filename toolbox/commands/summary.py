@@ -14,7 +14,7 @@ def summary(context: typer.Context):
 
     random_function = random.choice(list(cowsay.char_funcs.values()))
     tasks = list(find_tasks(context.obj["tasks_directory"]))
-    event_config = EventConfig.from_file(context.obj["config_directory"])
+    event_config = EventConfig.from_config_directory(context.obj["config_directory"])
 
     random_function(f"""
         Whoa! This repo has {len(tasks)} tasks definitions!

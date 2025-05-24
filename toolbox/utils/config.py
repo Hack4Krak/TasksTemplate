@@ -6,31 +6,26 @@ import yaml
 from pydantic import BaseModel, Field
 
 
-class EventConfig(BaseModel):
+class YamlConfig:
+    @classmethod
+    def from_config_directory(cls, config_directory: Path):
+        path = config_directory / f"{cls.__name__.replace('Config', '').lower()}.yaml"
+        config = yaml.load(path.read_text(), Loader=yaml.FullLoader)
+        if issubclass(cls, BaseModel):
+            return cls.model_validate(config)
+
+
+class EventConfig(YamlConfig, BaseModel):
     id: str
     start_date: datetime = Field(..., alias="start-date")
     end_date: datetime = Field(..., alias="end-date")
 
-    @staticmethod
-    def from_file(config_directory: Path):
-        config_directory = config_directory / "event.yaml"
-        config = yaml.load(config_directory.read_text(), Loader=yaml.FullLoader)
 
-        return EventConfig(**config)
-
-
-class RegistrationConfig(BaseModel):
+class RegistrationConfig(YamlConfig, BaseModel):
     start_date: datetime = Field(..., alias="start-date")
     end_date: datetime = Field(..., alias="end-date")
     max_team_size: int = Field(..., alias="max-team-size", ge=1)
     registration_mode: Literal["internal", "external"] = Field(..., alias="registration-mode")
-
-    @staticmethod
-    def from_file(config_directory: Path):
-        config_directory = config_directory / "registration.yaml"
-        config = yaml.load(config_directory.read_text(), Loader=yaml.FullLoader)
-
-        return RegistrationConfig(**config)
 
 
 class Label(BaseModel):
@@ -39,12 +34,5 @@ class Label(BaseModel):
     description: str
 
 
-class LabelsConfig(BaseModel):
+class LabelsConfig(YamlConfig, BaseModel):
     labels: list[Label]
-
-    @staticmethod
-    def from_file(config_directory: Path):
-        config_directory = config_directory / "labels.yaml"
-        config = yaml.load(config_directory.read_text(), Loader=yaml.FullLoader)
-
-        return LabelsConfig(**config)
