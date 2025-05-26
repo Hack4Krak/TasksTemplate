@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Annotated
 
@@ -5,7 +6,8 @@ import rich
 import typer
 from rich.table import Table
 
-from toolbox.utils.docker import get_docker_client
+from toolbox.utils.podman import Podman, PodmanCompose
+from toolbox.utils.tasks import find_docker_compose_files
 
 app = typer.Typer()
 
@@ -23,50 +25,106 @@ def main(
 
 
 @app.command()
+def install():
+    """
+    Download and install podman_compose.py script to ./bin directory.
+    """
+    print("Downloading podman_compose...")
+    PodmanCompose.install()
+    print("podman-compose installed successfully in ./bin/podman_compose.py")
+
+
+@app.command()
 def up(context: typer.Context):
     """
-    Starts all tasks services
+    Start all services and add them to the pod
     """
-    docker = get_docker_client(context)
+    podman_compose = PodmanCompose()
+    compose_files = list(find_docker_compose_files(context.obj["tasks_directory"]))
 
-    docker.compose.build()
-    docker.compose.up(detach=True)
+    for file in compose_files:
+        print(f"Starting {file}...")
+        podman_compose.up(file, labels={"pl.hack4krak.toolbox.task_id": file.parent.name})
+
+    print("Starting main compose...")
+    podman_compose.up(context.obj["main_compose"])
 
     print("All services are up and running")
 
 
 @app.command()
-def down(context: typer.Context):
+def down():
     """
-    Stops all running services
+    Stop all services in the pod.
     """
-    docker = get_docker_client(context)
+    run("stop")
+    print("Stopped all services")
 
-    docker.compose.down()
 
-    print("All services are down")
+@app.command()
+def run(command: str = typer.Argument(None)):
+    """
+    Run `podman pod` commands for the 'tasks' pod.
+    Useful subcommands: stats, restart, pause, rm.
+    """
+    podman = Podman()
+    podman.run_pod(command)
 
 
 @app.command()
 def ps(context: typer.Context):
     """
-    Displays status of all Docker containers in a modern full-screen table.
+    List all running services in the pod, their state, CPU and memory usage.
     """
-    docker = get_docker_client(context)
-    services_amount = len(docker.compose.config().services)
+    podman = Podman()
+    podman_compose = PodmanCompose()
+
+    expected_services = {
+        directory.parent.name: podman_compose.services(cwd=str(directory.parent))
+        for directory in find_docker_compose_files(context.obj["tasks_directory"])
+    }
+
+    containers = json.loads(podman.run_pod("inspect", capture_output=True).stdout)[0]["Containers"]
+
+    containers_data = podman.get_data("ps", [])
+    containers_data = {container["Id"]: container for container in containers_data}
+
+    running_services, unassigned = {}, []
+    for container in containers:
+        stats = podman.get_data("stats", [container["Id"], "--no-stream"])[0]
+        task_id = containers_data[container["Id"]]["Labels"].get("pl.hack4krak.toolbox.task_id")
+        entry = {
+            "name": container["Name"],
+            "state": container["State"],
+            "cpu": stats.get("cpu_percent", "N/A"),
+            "mem": stats.get("mem_usage", "N/A"),
+        }
+
+        if task_id:
+            running_services.setdefault(task_id, []).append(entry)
+        else:
+            unassigned.append(entry)
 
     table = Table(expand=True)
+    table.add_column(f"Name (in {podman_compose.pod} pod)", style="magenta")
+    table.add_column("TaskId", style="white")
+    table.add_column("State", style="green")
+    table.add_column("CPU %", style="yellow")
+    table.add_column("Memory", style="blue")
 
-    table.add_column("Name", style="magenta")
-    table.add_column("Status", style="green")
+    for task_id, expected in expected_services.items():
+        running = running_services.get(task_id, [])
+        shown = {e["name"] for e in running}
+        for entry in running:
+            table.add_row(entry["name"], task_id, entry["state"], entry["cpu"], entry["mem"])
+        for service in expected:
+            if not any(service in name for name in shown):
+                table.add_row(f"[dim]not running ({service})[/dim]", task_id, "[red]missing[/red]", "-", "-")
+        table.add_section()
 
-    running_containers = docker.compose.ps(all=True)
-    for container in running_containers:
-        status_color = "green" if container.state.running else "red"
-        table.add_row(
-            container.name,
-            f"[{status_color}]{container.state.status}[/{status_color}]",
-        )
+    for entry in unassigned:
+        table.add_row(entry["name"], "[dim]unassigned[/dim]", entry["state"], entry["cpu"], entry["mem"])
+    if unassigned:
+        table.add_section()
 
     rich.print(table)
-    rich.print(f"There are {len(running_containers)}/{services_amount} containers running")

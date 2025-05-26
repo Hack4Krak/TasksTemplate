@@ -8,8 +8,10 @@ dependencies = [
     "cowsay>=6.1",
     "jsonschema>=4.23.0",
     "prompt>=0.4.1",
-    "python-on-whales>=0.75.1",
+    "pydantic>=2.11.4",
+    "python-dotenv>=1.1.0", # Required temporary for podman-compose
     "pyyaml>=6.0.2",
+    "requests>=2.32.3",
     "typer>=0.15.1",
 ]
 
