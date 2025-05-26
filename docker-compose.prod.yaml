@@ -4,14 +4,10 @@ services:
     container_name: traefik
     restart: always
     command:
-      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
     ports:
-      - "8000:80"
-      - "8080:8080"
+      - "80:80"
     volumes:
-      - "/run/user/1000/podman/podman.sock:/var/run/docker.sock:Z"
-    labels:
-      - "traefik.http.routers.api.rule=Host(`traefik.localhost`)"
-      - "traefik.http.routers.api.service=api@internal"
+      - "/run/podman/podman.sock:/var/run/docker.sock:Z"
+

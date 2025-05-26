@@ -1,7 +1,15 @@
 # Deployment
 
 Some tasks require service like a database with sql injection, web service etc.
-TasksTemplate provides very easy and intuitive way to configure & deploy them.
+TasksTemplate provides a straightforward and intuitive way to configure and deploy them.
+
+## Prerequisites
+
+We heavily rely on [Podman](https://podman.io/) and [podman-compose](https://github.com/containers/podman-compose/).
+
+> [!WARNING]  
+> Currently we require prerelease version of `podman-compose` to work properly.
+> You can install it with: `toolbox services install`
 
 ## Configuration
 
@@ -31,4 +39,4 @@ toolbox services down
 toolbox services ps
 ```
 
-If some feature is not supported by our toolbox, you can use `docker` commands instead.
+If our toolbox does not support some feature, you can use `podman` commands instead.
