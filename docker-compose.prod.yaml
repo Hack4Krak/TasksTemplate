@@ -6,8 +6,17 @@ services:
     command:
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--certificatesresolvers.le.acme.tlschallenge=true"
+      - "--certificatesresolvers.le.acme.email=admin@hack4krak.pl"
+      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.websecure.http.tls.certresolver=le"
+      - "--entrypoints.websecure.http.tls=true"
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - "/run/podman/podman.sock:/var/run/docker.sock:Z"
-
+      - "./letsencrypt:/letsencrypt"
+      - "/run/user/1001/podman/podman.sock:/var/run/docker.sock:Z"
