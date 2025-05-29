@@ -19,4 +19,4 @@ services:
       - "443:443"
     volumes:
       - "./letsencrypt:/letsencrypt"
-      - "/run/user/1001/podman/podman.sock:/var/run/docker.sock:Z"
+      - "/run/user/${UID}/podman/podman.sock:/var/run/docker.sock:Z"

@@ -76,7 +76,12 @@ class PodmanCompose:
             command = [*self.executable, *args]
         else:
             command = [self.executable, *args]
-        return run(*command, cwd=cwd)
+
+        env = os.environ.copy()
+        env["UID"] = str(os.getuid())
+        env["GID"] = str(os.getgid())
+
+        return run(*command, cwd=cwd, env=env)
 
     @staticmethod
     def install():

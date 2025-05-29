@@ -40,3 +40,16 @@ toolbox services ps
 ```
 
 If our toolbox does not support some feature, you can use `podman` commands instead.
+
+## Shell variables
+
+Toolbox automatically sets some shell variables to make it easier to work with services.
+
+- `UID` - your user ID
+- `GID` - your group ID
+
+You can use them in `docker-compose.yaml` like that:
+```yaml
+volumes:
+  - "/run/user/${UID}/podman/podman.sock:/var/run/docker.sock:Z"
+```

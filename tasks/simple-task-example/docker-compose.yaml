@@ -3,4 +3,6 @@ services:
     image: docker.io/traefik/whoami@sha256:200689790a0a0ea48ca45992e0450bc26ccab5307375b41c84dfc4f2475937ab
     labels:
       - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+    volumes:
+      - "/run/user/${UID}/podman/podman.sock:/var/run/docker.sock:Z"
 
