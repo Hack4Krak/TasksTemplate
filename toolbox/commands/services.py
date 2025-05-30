@@ -84,7 +84,8 @@ def ps(context: typer.Context):
         for directory in find_docker_compose_files(context.obj["tasks_directory"])
     }
 
-    containers = json.loads(podman.run_pod("inspect", capture_output=True).stdout)[0]["Containers"]
+    podman_inspect = json.loads(podman.run_pod("inspect", capture_output=True).stdout)
+    containers = (podman_inspect[0] if isinstance(podman_inspect, list) else podman_inspect)["Containers"]
 
     containers_data = podman.get_data("ps", [])
     containers_data = {container["Id"]: container for container in containers_data}
@@ -107,7 +108,7 @@ def ps(context: typer.Context):
 
     table = Table(expand=True)
     table.add_column(f"Name (in {podman_compose.pod} pod)", style="magenta")
-    table.add_column("TaskId", style="white")
+    table.add_column("Task Id", style="white")
     table.add_column("State", style="green")
     table.add_column("CPU %", style="yellow")
     table.add_column("Memory", style="blue")
