@@ -45,7 +45,7 @@ class PodmanCompose:
         self._verify_installed()
         self.pod = pod
 
-    def up(self, file: str | Path | None = None, labels: dict[str, str] | None = None) -> None:
+    def up(self, file: str | Path | None = None, labels: dict[str, str] | None = None, build: bool = True) -> None:
         args = ["--in-pod", self.pod, "--podman-run-args=--replace"]
         if file:
             args.append("-f")
@@ -53,7 +53,9 @@ class PodmanCompose:
         if labels:
             for label_name, label_value in labels.items():
                 args.append(f"--podman-run-args=--label={label_name}={label_value}")
-        args += ["up", "-d", "--build"]
+        args += ["up", "-d"]
+        if build:
+            args.append("--build")
         self.run(*args)
 
     def services(self, cwd: str) -> list[str]:

@@ -35,19 +35,31 @@ def install():
 
 
 @app.command()
-def up(context: typer.Context):
+def up(
+    context: typer.Context,
+    build: bool = True,
+    tasks: Annotated[list[str] | None, typer.Option("--tasks", help="Start ONLY specific services")] = None,
+):
     """
     Start all services and add them to the pod
     """
     podman_compose = PodmanCompose()
     compose_files = list(find_docker_compose_files(context.obj["tasks_directory"]))
 
+    if tasks:
+        compose_files = [file for file in compose_files if file.parent.name in tasks]
+        if not compose_files:
+            print("No matching tasks found.")
+            return
+
+    print(f"Starting {len(compose_files)} services...")
+
     for file in compose_files:
         print(f"Starting {file}...")
-        podman_compose.up(file, labels={"pl.hack4krak.toolbox.task_id": file.parent.name})
+        podman_compose.up(file, labels={"pl.hack4krak.toolbox.task_id": file.parent.name}, build=build)
 
     print("Starting main compose...")
-    podman_compose.up(context.obj["main_compose"])
+    podman_compose.up(context.obj["main_compose"], build=build)
 
     print("All services are up and running")
 
