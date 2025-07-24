@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: docker.io/traefik:v3.4@sha256:628f1c5c9c2bcb9ee185566f9df673ca7fcda8930d39c21473523a7687020f89
+    image: docker.io/traefik:v3.4@sha256:06ddf61ee653caf4f4211a604e657f084f4727f762c16f826c97aafbefcb279e
     container_name: traefik
     restart: always
     command:
