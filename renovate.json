@@ -4,5 +4,13 @@
     "config:best-practices",
     ":semanticCommitTypeAll(chore)"
   ],
+  "packageRules": [
+    {
+      "description": "Bump Github actions monthly and request reviews",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "extends": ["schedule:weekly"]
+    }
+  ],
   "dependencyDashboard": false
 }
