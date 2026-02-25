@@ -37,7 +37,7 @@ def config(context: typer.Context):
         RegistrationConfig.from_config_directory(config_directory)
         rich.print("[green]All config files are valid!")
     except Exception as exception:
-        rich.print(f"[red]event.yaml config is invalid: {exception}")
+        rich.print(f"[red]Event or registration config is invalid: {exception}")
 
 
 @app.command()
