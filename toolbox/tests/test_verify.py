@@ -44,13 +44,36 @@ def invalid_labels_config():
     }
 
 
-@pytest.fixture
-def valid_registration_config():
-    return """
+PARTIAL_REGISTRATION_CONFIG = """
     start-date: 2025-01-01T8:30:00+01:00
     end-date: 2025-02-14T23:59:59+01:00
+    max-teams: 67
     max-team-size: 5
+    """
+
+
+@pytest.fixture
+def valid_registration_config_internal():
+    return f"""
+    {PARTIAL_REGISTRATION_CONFIG}
     registration-mode: internal
+    """
+
+
+@pytest.fixture
+def valid_registration_config_external():
+    return f"""
+    {PARTIAL_REGISTRATION_CONFIG}
+    registration-mode: external
+    max-teams-per-org: 3
+    """
+
+
+@pytest.fixture
+def invalid_registration_config_external():
+    return f"""
+    {PARTIAL_REGISTRATION_CONFIG}
+    registration-mode: external
     """
 
 
@@ -267,12 +290,42 @@ def test_verify_assets_directory_not_found(mock_is_file, mock_is_dir, mock_iterd
 
 
 @patch.object(Path, "read_text")
-def test_config_valid(mock_read_text, mock_context, valid_event_config, valid_registration_config):
-    mock_read_text.side_effect = [valid_event_config, valid_registration_config]
+def test_config_valid_registration_internal(
+    mock_read_text, mock_context, valid_event_config, valid_registration_config_internal
+):
+    mock_read_text.side_effect = [valid_event_config, valid_registration_config_internal]
 
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
         mock_print.assert_called_with("[green]All config files are valid!", sep=" ", end="\n")
+
+
+@patch.object(Path, "read_text")
+def test_config_valid_registration_external(
+    mock_read_text, mock_context, valid_event_config, valid_registration_config_external
+):
+    mock_read_text.side_effect = [valid_event_config, valid_registration_config_external]
+
+    with patch.object(Console, "print") as mock_print:
+        config(mock_context)
+        mock_print.assert_called_with("[green]All config files are valid!", sep=" ", end="\n")
+
+
+@patch.object(Path, "read_text")
+def test_config_registration_external_no_max_team_per_org(
+    mock_read_text, mock_context, valid_event_config, invalid_registration_config_external
+):
+    mock_read_text.side_effect = [valid_event_config, invalid_registration_config_external]
+
+    with patch.object(Console, "print") as mock_print:
+        config(mock_context)
+        mock_print.assert_called_with(
+            "[red]event.yaml config is invalid: 1 validation error for RegistrationConfig\n  'max-teams-per-org' "
+            "must be provided if registration-mode is external [type=missing_max_teams_per_org, "
+            "input_value={'start-date': datetime.d...ation-mode': 'external'}, input_type=dict]",
+            sep=" ",
+            end="\n",
+        )
 
 
 @patch.object(Path, "read_text")
