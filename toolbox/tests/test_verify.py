@@ -320,8 +320,8 @@ def test_config_registration_external_no_max_team_per_org(
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
         mock_print.assert_called_with(
-            "[red]event.yaml config is invalid: 1 validation error for RegistrationConfig\n  'max-teams-per-org' "
-            "must be provided if registration-mode is external [type=missing_max_teams_per_org, "
+            "[red]Event or registration config is invalid: 1 validation error for RegistrationConfig\n  "
+            "'max-teams-per-org' must be provided if registration-mode is external [type=missing_max_teams_per_org, "
             "input_value={'start-date': datetime.d...ation-mode': 'external'}, input_type=dict]",
             sep=" ",
             end="\n",
