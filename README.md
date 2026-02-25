@@ -25,7 +25,12 @@ For more information check out [our documentation](docs/)!
 uv sync
 ```
 
-### 2. Run CLI
+### 2. Install git pre-commit hooks
+```shell
+uv run pre-commit install
+```
+
+### 3. Run CLI
 ```shell
 uv run toolbox 
 ```
