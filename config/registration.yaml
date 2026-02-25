@@ -3,6 +3,8 @@ start-date: 2025-01-01T8:30:00+01:00
 # Date and time when registration ends
 end-date: 2025-02-14T23:59:59+01:00
 
+# Maximal number of teams registered
+max-teams: 67
 # Maximal number of users in a team (inclusive)
 max-team-size: 5
 
@@ -10,3 +12,5 @@ max-team-size: 5
 # - external: teams are registered externally (e.g., by a supervisor, teacher etc.)
 # - internal: the users register teams themselves
 registration-mode: external
+# Maximal number of teams per organization if in external mode
+max-teams-per-organization: 3
