@@ -1,5 +1,3 @@
-$schema: "labels_schema.json"
-
 # This file defines the labels used in the project.
 # Labels are used to categorize tasks based on their type.
 labels:
