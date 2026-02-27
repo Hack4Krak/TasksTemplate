@@ -8,6 +8,7 @@ from click.exceptions import Exit
 from jsonschema import ValidationError, validate
 
 from toolbox.utils.config import EventConfig, LabelsConfig, RegistrationConfig
+from toolbox.utils.hash import hash_file
 from toolbox.utils.tasks import find_tasks
 
 app = typer.Typer()
@@ -89,6 +90,8 @@ def tasks(context: typer.Context):
 
     valid_count = 0
     invalid_count = 0
+    tasks_icons = {}
+    tasks_backgrounds = {}
 
     rich.print("[dim]Validating tasks...")
     for subdir_path in find_tasks(tasks_directory):
@@ -119,7 +122,7 @@ def tasks(context: typer.Context):
             invalid_count += 1
             continue
 
-        if not verify_pictures(subdir_path / "pictures"):
+        if not verify_pictures(subdir_path / "pictures", task_id, tasks_icons, tasks_backgrounds):
             invalid_count += 1
             continue
 
@@ -135,6 +138,13 @@ def tasks(context: typer.Context):
     total_tasks = valid_count + invalid_count
     rich.print(f"\nFinished validating all tasks: {total_tasks} tasks processed.")
     rich.print(f"[green]{valid_count} tasks are valid.")
+
+    for task_list in tasks_icons.values():
+        if len(task_list) > 1:
+            rich.print("[yellow]Following tasks have the same icons: " + ", ".join(task_list))
+    for task_list in tasks_backgrounds.values():
+        if len(task_list) > 1:
+            rich.print("[yellow]Following tasks have the same backgrounds: " + ", ".join(task_list))
 
     if invalid_count > 0:
         rich.print(f"[red]{invalid_count} tasks are invalid.")
@@ -167,12 +177,21 @@ def verify_assets(yaml_data: dict, assets_path: Path, subdir_path: Path) -> bool
     return True
 
 
-def verify_pictures(subdir_path: Path) -> bool:
+def verify_pictures(
+    subdir_path: Path, task_id: str, tasks_icons: dict[str, list[str]], tasks_backgrounds: dict[str, list[str]]
+) -> bool:
     required_pictures = ["background.png", "icon.png"]
     for picture in required_pictures:
         picture_path = subdir_path.joinpath(picture)
         if not picture_path.is_file():
             rich.print(f"[red]Missing file pictures/{picture} for {subdir_path}")
             return False
+        picture_hash = hash_file(picture_path)
+        if picture == "icon.png":
+            tasks_icons[picture_hash] = tasks_icons.get(picture_hash, []) + [task_id]
+        elif picture == "background.png":
+            tasks_backgrounds[picture_hash] = tasks_backgrounds.get(picture_hash, []) + [task_id]
+        else:
+            rich.print("[red]Unsupported file type for duplicate detection: " + picture)
 
     return True
