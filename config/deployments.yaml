@@ -1,0 +1,21 @@
+# Default deploy target used by `toolbox services` commands.
+default-target: dev
+
+targets:
+  dev:
+    main-compose: docker-compose.yaml
+    traefik-provider: docker
+    stack-network: bridge
+    publish-mode: host
+    docker-socket: /run/user/1000/docker.sock
+
+  prod:
+    main-compose: docker-compose.prod.yaml
+    traefik-provider: swarm
+    stack-network: ctf-services-net
+    publish-mode: ingress
+    docker-socket: /var/run/docker.sock
+    # Example remote settings:
+    # docker-context: production
+    # docker-host: ssh://docker@prod-host
+    # with-registry-auth: true

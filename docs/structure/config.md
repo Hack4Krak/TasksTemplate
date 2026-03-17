@@ -41,4 +41,8 @@ display:
   icon_coordinates:
     x: 24
     y: 20
+
+# Optional deployment override for service-enabled tasks
+deployment:
+  target: "dev"
 ```

@@ -3,8 +3,8 @@
 This optional file is required for configuring services for tasks.
 
 > [!NOTE]
-> All paths (volumes, Dockerfile) are relative to the root of the repository.
-> You can change it by providing `--main-compose` parameter.
+> Task compose files are deployed with Docker Swarm.
+> Labels used by Traefik should be defined in `deploy.labels`.
 
 ```yaml
 # Here you can define any service you want
@@ -12,8 +12,11 @@ This optional file is required for configuring services for tasks.
 services:
   whoami:
     image: traefik/whoami
-    labels:
-      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+        - "traefik.http.services.whoami.loadbalancer.server.port=80"
     networks:
       - ctf-services-net
 
@@ -23,3 +26,5 @@ networks:
   ctf-services-net:
     external: true
 ```
+
+If a task should be deployed to a non-default environment, set `deployment.target` in its `config.yaml`.

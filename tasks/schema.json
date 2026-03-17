@@ -68,6 +68,15 @@
         }
       },
       "required": ["icon_coordinates"]
+    },
+    "deployment": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": ["target"]
     }
   },
   "required": ["id", "name", "flag_hash", "difficulty_estimate", "labels", "story", "display"]

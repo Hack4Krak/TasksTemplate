@@ -41,6 +41,11 @@ uv run toolbox
 - [toolbox/](toolbox/) - our custom CLI for working with this repository
 - [docs/](docs/) - documentation
 
+## Deployment
+
+Service deployment is handled through Docker Swarm.
+See `docs/DEPLOYMENT.md` for target configuration, Traefik labels, and toolbox commands.
+
 ## Stats
 
 ![Repobeats analytics image](https://repobeats.axiom.co/api/embed/302c940507d69624923aea749c322661176bed1b.svg "Repobeats analytics image")

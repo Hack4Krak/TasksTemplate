@@ -179,9 +179,8 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# Podman compose binary
+# Local helper binaries
 bin/
 
 # Deployment-related files
 letsencrypt/
-

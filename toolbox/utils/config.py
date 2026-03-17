@@ -15,6 +15,12 @@ class YamlConfig:
         if issubclass(cls, BaseModel):
             return cls.model_validate(config)
 
+    @classmethod
+    def from_path(cls, path: Path):
+        config = yaml.load(path.read_text(), Loader=yaml.FullLoader)
+        if issubclass(cls, BaseModel):
+            return cls.model_validate(config)
+
 
 class EventConfig(YamlConfig, BaseModel):
     id: str
@@ -48,3 +54,42 @@ class Label(BaseModel):
 
 class LabelsConfig(YamlConfig, BaseModel):
     labels: list[Label]
+
+
+class DeploymentTargetConfig(BaseModel):
+    main_compose: str | None = Field(default=None, alias="main-compose")
+    docker_context: str | None = Field(default=None, alias="docker-context")
+    docker_host: str | None = Field(default=None, alias="docker-host")
+    docker_tls: bool | None = Field(default=None, alias="docker-tls")
+    docker_tls_verify: bool | None = Field(default=None, alias="docker-tls-verify")
+    docker_tls_ca_cert: str | None = Field(default=None, alias="docker-tls-ca-cert")
+    docker_tls_cert: str | None = Field(default=None, alias="docker-tls-cert")
+    docker_tls_key: str | None = Field(default=None, alias="docker-tls-key")
+    swarm_advertise_address: str | None = Field(default=None, alias="swarm-advertise-address")
+    swarm_listen_address: str | None = Field(default=None, alias="swarm-listen-address")
+    traefik_provider: Literal["docker", "swarm"] | None = Field(default=None, alias="traefik-provider")
+    stack_network: str | None = Field(default=None, alias="stack-network")
+    publish_mode: Literal["host", "ingress"] | None = Field(default=None, alias="publish-mode")
+    docker_socket: str | None = Field(default=None, alias="docker-socket")
+    with_registry_auth: bool = Field(default=False, alias="with-registry-auth")
+
+
+class DeploymentsConfig(YamlConfig, BaseModel):
+    default_target: str = Field(default="dev", alias="default-target")
+    targets: dict[str, DeploymentTargetConfig] = Field(default_factory=lambda: {"dev": DeploymentTargetConfig()})
+
+    @model_validator(mode="after")
+    def check_default_target_exists(self):
+        if self.default_target not in self.targets:
+            raise PydanticCustomError(
+                "invalid_default_target",
+                "'default-target' must reference one of the configured deployment targets",
+            )
+        return self
+
+    @classmethod
+    def from_config_directory_optional(cls, config_directory: Path):
+        path = config_directory / "deployments.yaml"
+        if not path.exists():
+            return cls()
+        return cls.from_path(path)
