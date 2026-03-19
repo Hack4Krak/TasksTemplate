@@ -14,18 +14,8 @@ from toolbox.commands.verify import config, labels, tasks, verify_assets, verify
 def valid_event_config():
     return """
     id: tasks
-    name: Hack4Krak Test Edition
-    stages:
-      - name: Event start
-        type: event-start
-        start-date: 2025-02-15T08:30:00+01:00
-      - name: Pizza break
-        type: informative
-        start-date: 2025-02-15T12:30:00+01:00
-        description: Pizza served in the main hall
-      - name: Event end
-        type: event-end
-        start-date: 2025-02-15T15:30:00+01:00
+    end-date: 2025-02-15T15:30:00+01:00
+    start-date: 2025-02-15T8:30:00
     """
 
 
@@ -90,90 +80,6 @@ def invalid_registration_config_external():
 @pytest.fixture
 def invalid_event_config():
     return {"event_name": "Test Event"}
-
-
-@pytest.fixture
-def invalid_event_stage_config():
-    return """
-    id: tasks
-    name: Hack4Krak Test Edition
-    stages:
-      - name: Event start
-        type: event-start
-        start-date: 2025-02-15T08:30:00+01:00
-      - name: Event end
-        type: event-end
-        start-date: 2025-02-15T15:30:00+01:00
-      - name: Warm-up
-        type: normal
-        start-date: 2025-02-15T09:00:00+01:00
-    """
-
-
-@pytest.fixture
-def invalid_event_missing_start_stage_config():
-    return """
-    id: tasks
-    name: Hack4Krak Test Edition
-    stages:
-      - name: Lunch
-        type: informative
-        start-date: 2025-02-15T12:30:00+01:00
-      - name: Event end
-        type: event-end
-        start-date: 2025-02-15T15:30:00+01:00
-    """
-
-
-@pytest.fixture
-def invalid_event_missing_end_stage_config():
-    return """
-    id: tasks
-    name: Hack4Krak Test Edition
-    stages:
-      - name: Event start
-        type: event-start
-        start-date: 2025-02-15T08:30:00+01:00
-      - name: Lunch
-        type: informative
-        start-date: 2025-02-15T12:30:00+01:00
-    """
-
-
-@pytest.fixture
-def invalid_event_multiple_start_stages_config():
-    return """
-    id: tasks
-    name: Hack4Krak Test Edition
-    stages:
-      - name: Event start A
-        type: event-start
-        start-date: 2025-02-15T08:30:00+01:00
-      - name: Event start B
-        type: event-start
-        start-date: 2025-02-15T08:45:00+01:00
-      - name: Event end
-        type: event-end
-        start-date: 2025-02-15T15:30:00+01:00
-    """
-
-
-@pytest.fixture
-def invalid_event_multiple_end_stages_config():
-    return """
-    id: tasks
-    name: Hack4Krak Test Edition
-    stages:
-      - name: Event start
-        type: event-start
-        start-date: 2025-02-15T08:30:00+01:00
-      - name: Event end A
-        type: event-end
-        start-date: 2025-02-15T15:30:00+01:00
-      - name: Event end B
-        type: event-end
-        start-date: 2025-02-15T16:30:00+01:00
-    """
 
 
 @pytest.fixture
@@ -458,61 +364,6 @@ def test_config_registration_external_no_max_team_per_org(
             sep=" ",
             end="\n",
         )
-
-
-@patch.object(Path, "read_text")
-def test_config_invalid_event_stage(
-    mock_read_text, mock_context, invalid_event_stage_config, valid_registration_config_internal
-):
-    mock_read_text.side_effect = [invalid_event_stage_config, valid_registration_config_internal]
-
-    with patch.object(Console, "print") as mock_print:
-        config(mock_context)
-        assert "literal_error" in mock_print.call_args[0][0]
-
-
-@patch.object(Path, "read_text")
-def test_config_missing_event_start_stage(
-    mock_read_text, mock_context, invalid_event_missing_start_stage_config, valid_registration_config_internal
-):
-    mock_read_text.side_effect = [invalid_event_missing_start_stage_config, valid_registration_config_internal]
-
-    with patch.object(Console, "print") as mock_print:
-        config(mock_context)
-        assert "invalid_event_stage_count" in mock_print.call_args[0][0]
-
-
-@patch.object(Path, "read_text")
-def test_config_missing_event_end_stage(
-    mock_read_text, mock_context, invalid_event_missing_end_stage_config, valid_registration_config_internal
-):
-    mock_read_text.side_effect = [invalid_event_missing_end_stage_config, valid_registration_config_internal]
-
-    with patch.object(Console, "print") as mock_print:
-        config(mock_context)
-        assert "invalid_event_stage_count" in mock_print.call_args[0][0]
-
-
-@patch.object(Path, "read_text")
-def test_config_multiple_event_start_stages(
-    mock_read_text, mock_context, invalid_event_multiple_start_stages_config, valid_registration_config_internal
-):
-    mock_read_text.side_effect = [invalid_event_multiple_start_stages_config, valid_registration_config_internal]
-
-    with patch.object(Console, "print") as mock_print:
-        config(mock_context)
-        assert "invalid_event_stage_count" in mock_print.call_args[0][0]
-
-
-@patch.object(Path, "read_text")
-def test_config_multiple_event_end_stages(
-    mock_read_text, mock_context, invalid_event_multiple_end_stages_config, valid_registration_config_internal
-):
-    mock_read_text.side_effect = [invalid_event_multiple_end_stages_config, valid_registration_config_internal]
-
-    with patch.object(Console, "print") as mock_print:
-        config(mock_context)
-        assert "invalid_event_stage_count" in mock_print.call_args[0][0]
 
 
 @patch.object(Path, "read_text")

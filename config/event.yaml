@@ -1,32 +1,8 @@
-# Event configuration
+# TasksTemplate configuration
 
 # Unique identifier for the event
-id: h4k-test-edition
-# Human-readable name of the event displayed in the UI
-name: Hack4Krak Test Edition
-
-# Event stages shown on the timeline.
-# Each stage is either a single point in time (only start-date) or a range (start-date + end-date).
-#
-# Supported stage types:
-# - event-start: when flag submission opens (point in time); exactly one required
-# - event-end: when flag submission closes (point in time); exactly one required
-# - informative: info marker (point in time or range if end-date is provided)
-stages:
-  - name: Breakfast
-    type: informative
-    start-date: 2025-02-15T09:00:00+01:00
-    end-date: 2025-02-15T11:00:00+01:00
-
-  - name: Competition Start
-    type: event-start
-    start-date: 2025-02-15T10:00:00+01:00
-
-  - name: Lunch
-    type: informative
-    start-date: 2025-02-15T14:00:00+01:00
-    end-date: 2025-02-15T15:00:00+01:00
-
-  - name: Event End
-    type: event-end
-    start-date: 2025-02-16T16:00:00+01:00
+id: tasks-template
+# Date and time when CTF starts (users have access to tasks etc.)
+start-date: 2025-02-15T8:30:00+01:00
+# After this date users can't upload more flags
+end-date: 2025-02-15T15:30:00+01:00
