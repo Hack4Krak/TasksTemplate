@@ -7,7 +7,7 @@ import yaml
 from click.exceptions import Exit
 from jsonschema import ValidationError, validate
 
-from toolbox.utils.config import EventConfig, LabelsConfig, RegistrationConfig
+from toolbox.utils.config import DeploymentsConfig, EventConfig, LabelsConfig, RegistrationConfig
 from toolbox.utils.hash import hash_file
 from toolbox.utils.tasks import find_tasks
 
@@ -36,6 +36,7 @@ def config(context: typer.Context):
     try:
         EventConfig.from_config_directory(config_directory)
         RegistrationConfig.from_config_directory(config_directory)
+        DeploymentsConfig.from_config_directory_optional(config_directory)
         rich.print("[green]All config files are valid!")
     except Exception as exception:
         rich.print(f"[red]Event or registration config is invalid: {exception}")

@@ -15,6 +15,12 @@ class YamlConfig:
         if issubclass(cls, BaseModel):
             return cls.model_validate(config)
 
+    @classmethod
+    def from_path(cls, path: Path):
+        config = yaml.load(path.read_text(), Loader=yaml.FullLoader)
+        if issubclass(cls, BaseModel):
+            return cls.model_validate(config)
+
 
 class EventStage(BaseModel):
     name: str
@@ -105,3 +111,29 @@ class Label(BaseModel):
 
 class LabelsConfig(YamlConfig, BaseModel):
     labels: list[Label]
+
+
+class DeploymentTargetConfig(BaseModel):
+    main_compose: str | None = Field(default=None, alias="main-compose")
+    stack_network: str | None = Field(default=None, alias="stack-network")
+
+
+class DeploymentsConfig(YamlConfig, BaseModel):
+    default_target: str = Field(default="dev", alias="default-target")
+    targets: dict[str, DeploymentTargetConfig] = Field(default_factory=lambda: {"dev": DeploymentTargetConfig()})
+
+    @model_validator(mode="after")
+    def check_default_target_exists(self):
+        if self.default_target not in self.targets:
+            raise PydanticCustomError(
+                "invalid_default_target",
+                "'default-target' must reference one of the configured deployment targets",
+            )
+        return self
+
+    @classmethod
+    def from_config_directory_optional(cls, config_directory: Path):
+        path = config_directory / "deployments.yaml"
+        if not path.exists():
+            return cls()
+        return cls.from_path(path)
