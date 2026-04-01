@@ -2,13 +2,20 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:best-practices",
-    ":semanticCommitTypeAll(chore)"
+    ":semanticCommitTypeAll(chore)",
+    "group:allNonMajor"
   ],
   "packageRules": [
     {
-      "description": "Bump Github actions monthly and request reviews",
       "matchManagers": ["github-actions"],
-      "groupName": "github-actions",
+      "groupName": "GitHub Actions",
+      "groupSlug": "github-actions",
+      "extends": ["schedule:weekly"]
+    },
+    {
+      "matchManagers": ["pep621"],
+      "groupName": "Python (uv)",
+      "groupSlug": "python-uv",
       "extends": ["schedule:weekly"]
     }
   ],
