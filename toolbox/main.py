@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Annotated
 
 import typer
+from dotenv import load_dotenv
 
 from toolbox.commands import hash_flag, services, summary, tests, verify
 
@@ -25,17 +26,17 @@ def main(
     tasks: Annotated[Path | None, typer.Option("--tasks", help="Path to tasks directory")] = Path("tasks"),
     config: Annotated[Path | None, typer.Option("--config", help="Path to configuration directory")] = Path("config"),
 ):
+    load_dotenv()
     ctx.obj = {
         "tasks_directory": tasks,
         "config_directory": config,
     }
-    return
 
 
 app.command()(summary.summary)
 app.command()(hash_flag.hash_flag)
 app.add_typer(verify.app, name="verify", help="Verify configurations", no_args_is_help=True)
-app.add_typer(services.app, name="services", help="Start and manage services", no_args_is_help=True)
+app.add_typer(services.app, name="services", help="Manage CTF task services", no_args_is_help=True)
 app.add_typer(tests.app, name="tests", help="Run tests for services", no_args_is_help=True)
 
 if __name__ == "__main__":

@@ -225,6 +225,19 @@ def valid_assets():
     }
 
 
+@pytest.fixture
+def valid_deployments_config():
+    return {
+        "default-target": "dev",
+        "targets": {
+            "dev": {},
+            "prod": {
+                "docker-context": "production",
+            },
+        },
+    }
+
+
 @patch.object(Path, "iterdir")
 @patch.object(Path, "is_dir")
 @patch.object(Path, "is_file")
@@ -422,9 +435,13 @@ def test_verify_assets_directory_not_found(mock_is_file, mock_is_dir, mock_iterd
 
 @patch.object(Path, "read_text")
 def test_config_valid_registration_internal(
-    mock_read_text, mock_context, valid_event_config, valid_registration_config_internal
+    mock_read_text, mock_context, valid_event_config, valid_registration_config_internal, valid_deployments_config
 ):
-    mock_read_text.side_effect = [valid_event_config, valid_registration_config_internal]
+    mock_read_text.side_effect = [
+        valid_event_config,
+        valid_registration_config_internal,
+        yaml.dump(valid_deployments_config),
+    ]
 
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
@@ -433,19 +450,25 @@ def test_config_valid_registration_internal(
 
 @patch.object(Path, "read_text")
 def test_config_valid_registration_external(
-    mock_read_text, mock_context, valid_event_config, valid_registration_config_external
+    mock_read_text, mock_context, valid_event_config, valid_registration_config_external, valid_deployments_config
 ):
-    mock_read_text.side_effect = [valid_event_config, valid_registration_config_external]
+    mock_read_text.side_effect = [
+        valid_event_config,
+        valid_registration_config_external,
+        yaml.dump(valid_deployments_config),
+    ]
 
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
         mock_print.assert_called_with("[green]All config files are valid!", sep=" ", end="\n")
 
 
+@patch.object(Path, "exists")
 @patch.object(Path, "read_text")
 def test_config_registration_external_no_max_team_per_org(
-    mock_read_text, mock_context, valid_event_config, invalid_registration_config_external
+    mock_read_text, mock_exists, mock_context, valid_event_config, invalid_registration_config_external
 ):
+    mock_exists.return_value = True
     mock_read_text.side_effect = [valid_event_config, invalid_registration_config_external]
 
     with patch.object(Console, "print") as mock_print:
@@ -458,6 +481,24 @@ def test_config_registration_external_no_max_team_per_org(
             sep=" ",
             end="\n",
         )
+
+
+@patch.object(Path, "exists")
+@patch.object(Path, "read_text")
+def test_config_invalid_deployments(
+    mock_read_text, mock_exists, mock_context, valid_event_config, valid_registration_config_internal
+):
+    mock_exists.return_value = True
+    mock_read_text.side_effect = [
+        valid_event_config,
+        valid_registration_config_internal,
+        yaml.dump({"default-target": "prod", "targets": {"dev": {}}}),
+    ]
+
+    with patch.object(Console, "print") as mock_print:
+        config(mock_context)
+        mock_print.assert_called_once()
+        assert "[red]" in mock_print.call_args[0][0]
 
 
 @patch.object(Path, "read_text")

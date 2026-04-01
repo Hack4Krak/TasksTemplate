@@ -1,0 +1,11 @@
+# Default deploy target used by `toolbox services` commands.
+default-target: dev
+
+targets:
+  dev:
+    main-compose: docker-compose.yaml
+    stack-network: bridge
+
+  prod:
+    main-compose: docker-compose.prod.yaml
+    stack-network: ctf-services-net
