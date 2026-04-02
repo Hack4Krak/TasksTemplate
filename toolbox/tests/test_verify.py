@@ -388,7 +388,6 @@ def test_verify_duplicated_pictures(
     tasks(mock_context)
 
     mock_rich_print.assert_any_call("[yellow]Following tasks have the same icons: valid_task, second_task")
-    mock_rich_print.assert_any_call("[yellow]Following tasks have the same backgrounds: valid_task, second_task")
 
 
 @patch.object(Path, "iterdir")
@@ -592,7 +591,7 @@ def test_labels_missing_icons(mock_iterdir, mock_read_text, mock_context, valid_
 def test_valid_verify_pictures(mock_is_file, _mock_hash_file):
     mock_is_file.return_value = True
 
-    assert verify_pictures(Path("assets"), "", {}, {}) is True
+    assert verify_pictures(Path("assets"), "", {}) is True
 
 
 @patch("toolbox.commands.verify.hash_file")
@@ -601,15 +600,13 @@ def test_valid_verify_pictures_duplicated(mock_is_file, mock_hash_file):
     mock_is_file.return_value = True
     mock_hash_file.return_value = "duplicate_hash"
     tasks_icons = {"duplicate_hash": ["41"]}
-    tasks_backgrounds = {"duplicate_hash": ["UwU"]}
 
-    assert verify_pictures(Path("assets"), "67", tasks_icons, tasks_backgrounds) is True
+    assert verify_pictures(Path("assets"), "67", tasks_icons) is True
     assert tasks_icons["duplicate_hash"] == ["41", "67"]
-    assert tasks_backgrounds["duplicate_hash"] == ["UwU", "67"]
 
 
 @patch.object(Path, "is_file")
 def test_missing_verify_pictures(mock_is_file):
     mock_is_file.return_value = False
 
-    assert verify_pictures(Path("assets"), "", {}, {}) is False
+    assert verify_pictures(Path("assets"), "", {}) is False
