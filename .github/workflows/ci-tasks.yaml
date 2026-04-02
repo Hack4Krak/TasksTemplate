@@ -1,4 +1,4 @@
-name: Verify Tasks
+name: CI Tasks
 on:
   push:
     branches: [master]
@@ -18,5 +18,8 @@ jobs:
       - name: Set up Python
         run: uv python install
 
-      - name: Verify Tasks
+      - name: Verify tasks configuration
         run: uv run toolbox verify all
+
+      - name: Run static task tests
+        run: uv run toolbox tests static

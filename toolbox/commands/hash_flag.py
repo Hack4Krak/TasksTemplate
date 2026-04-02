@@ -1,7 +1,7 @@
-import hashlib
-
 import rich
 import typer
+
+from ..utils.hash import hash_flag as hash_flag_util
 
 
 def hash_flag():
@@ -22,6 +22,5 @@ def hash_flag():
             rich.print("[yellow]Warning: For example, use 'skibidi' instead of 'hack4KrakCTF{skibidi}'.")
             rich.print("[yellow]Warning: Repeat the command with the corrected flag.\n")
 
-        hashed_flag = hashlib.sha256(flag.encode("utf-8"))
-        print(hashed_flag.hexdigest())
+        print(hash_flag_util(flag))
         break
