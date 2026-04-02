@@ -1,5 +1,5 @@
 # `config.yaml`
-Main configuration file for task. It contains all necessary information about task, like name, flag hash, story etc.
+Main configuration file for task. It contains all necessary information about task, like name, flag hash, difficulty estimate etc.
 
 ```yaml
 $schema: "../schema.json"
@@ -26,15 +26,6 @@ labels:
 assets:
   - description: "Hard html game to find button"
     path: "task.html" # Path relative to `assets/`
-
-# Dialogues for task, which will be displayed after clicking on task icon on map
-story:
-  - title: "Wiedźma"
-    message: "Witaj, podróżniku. Co cię sprowadza do mojego domku w lesie?"
-  - title: "Podróżnik"
-    message: "Omom, ta zielona mikstura. Wygląda dobrze. Mogę ją wypić?"
-  - title: "Wiedźma"
-    message: "Magia nie jest dla każdego. Czasem lepiej trzymać się z dala od tajemniczych mikstur."
 
 # Configuration related to display of this task on a map
 display:

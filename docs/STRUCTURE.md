@@ -7,7 +7,7 @@ Tasks have strictly defined files structure:
 - [`description.md`](structure/description.md) - task description file
 - [`solution.md`](structure/solution.md) - solution revealed after competition to users
 - [`assets/`](structure/assets.md) - directory with task assets
-- [`pictures/`](structure/pictures.md) - directory with icon and background pictures
+- [`pictures/`](structure/pictures.md) - directory containing pictures for a task (currently only icon.png)
 - [`src/`](structure/src.md) - source code for task implementation
 
 Documentation of each part of task structure is available in [documentation structure](structure/) directory.
