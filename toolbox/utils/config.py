@@ -137,3 +137,17 @@ class DeploymentsConfig(YamlConfig, BaseModel):
         if not path.exists():
             return cls()
         return cls.from_path(path)
+
+
+class TaskDeploymentConfig(BaseModel):
+    targets: list[str] = Field(default_factory=list)
+
+
+class TaskConfig(YamlConfig, BaseModel):
+    # Full structure validated by tasks/schema.json; those fields are just defined for the toolbox.
+
+    id: str
+    name: str
+    flag_hash: str
+    labels: list[str]
+    deployment: TaskDeploymentConfig | None = None
