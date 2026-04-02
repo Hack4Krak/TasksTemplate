@@ -18,11 +18,11 @@ jobs:
       - name: Set up Python
         run: uv python install
 
-      - name: Run Tests
-        run: uv run pytest
+      - name: Run toolbox tests
+        run: uv run pytest toolbox/tests/ -v
 
-      - name: Run Lint
+      - name: Run linting
         run: uv run ruff check
 
-      - name: Run Formatter
+      - name: Run formatter check
         run: uv run ruff format --check

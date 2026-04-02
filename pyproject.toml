@@ -13,6 +13,7 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "python-on-whales>=0.81.0",
     "pyyaml>=6.0.2",
+    "requests>=2.32.0",
     "typer>=0.15.1",
     "xxhash>=3.6.0",
 ]
@@ -27,6 +28,7 @@ packages = ["toolbox"]
 [dependency-groups]
 dev = [
     "pytest>=8.3.4",
+    "pytest-timeout>=2.3.1",
     "pre-commit>=4.5.1",
     "ruff>=0.9.5",
 ]
@@ -41,7 +43,12 @@ toolbox = "toolbox.main:app"
 test = ["pytest"]
 
 [tool.pytest.ini_options]
-testpaths = ["toolbox/tests/"]
+testpaths = ["toolbox/tests/", "tasks/*/tests/"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+# Default timeout for tests (can be overridden per-test with @pytest.mark.timeout(seconds))
+timeout = 15
 
 [tool.ruff]
 line-length = 120

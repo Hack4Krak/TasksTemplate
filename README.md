@@ -41,6 +41,11 @@ uv run toolbox
 - [toolbox/](toolbox/) - our custom CLI for working with this repository
 - [docs/](docs/) - documentation
 
+## Testing
+
+The repository includes a comprehensive testing infrastructure for both CI and deployment tests.
+See [`docs/TESTING.md`](docs/TESTING.md) for writing and running tasks tests.
+
 ## Deployment
 
 Service deployment is handled through Docker Swarm.
