@@ -1,7 +1,7 @@
 from collections.abc import Generator
 from pathlib import Path
 
-import yaml
+from toolbox.utils.config import TaskConfig
 
 SUPPORTED_DOCKER_COMPOSE_FILES = ["docker-compose.yaml", "docker-compose.yml", "compose.yml", "compose.yaml"]
 
@@ -30,14 +30,15 @@ def find_docker_compose_files(tasks_directory: Path) -> Generator[Path]:
             yield docker_compose_file
 
 
-def load_task_config(task_directory: Path) -> dict:
-    return yaml.safe_load((task_directory / "config.yaml").read_text(encoding="utf-8"))
+def load_task_config(task_directory: Path) -> TaskConfig:
+    return TaskConfig.from_path(task_directory / "config.yaml")
 
 
-def get_task_deployment_target(task_directory: Path) -> str | None:
-    deployment = load_task_config(task_directory).get("deployment", {})
-    if isinstance(deployment, dict):
-        target = deployment.get("target")
-        if isinstance(target, str) and target:
-            return target
-    return None
+def get_task_deployment_targets(task_directory: Path) -> list[str]:
+    try:
+        config = load_task_config(task_directory)
+    except FileNotFoundError, TypeError, ValueError:
+        return []
+    if config.deployment and config.deployment.targets:
+        return config.deployment.targets
+    return []

@@ -41,4 +41,10 @@ display:
   icon_coordinates:
     x: 24
     y: 20
+
+# Optional: Restrict deployment to specific targets only
+# If omitted, this task will deploy on all targets (dev, prod, local-network, etc.)
+# deployment:
+#   targets:
+#     - "local-network"
 ```

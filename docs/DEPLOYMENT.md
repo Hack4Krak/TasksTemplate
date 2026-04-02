@@ -53,19 +53,52 @@ networks:
 
 See [structure/docker-compose.md](structure/docker-compose.md) for the full reference.
 
+## Deployment targets
+
+You can restrict tasks to deploy only on specific targets (e.g., `dev`, `prod`, `local-network`). By default, tasks deploy everywhere.
+
+Configure targets in `config/deployments.yaml`:
+```yaml
+default-target: dev
+targets:
+  dev:
+    main-compose: docker-compose.yaml
+  prod:
+    main-compose: docker-compose.prod.yaml
+  local-network:
+    main-compose: docker-compose.yaml
+```
+
+Restrict a task in its `config.yaml`:
+```yaml
+# Only deploy on local-network (skip on dev/prod)
+deployment:
+  targets:
+    - "local-network"
+```
+
+Omit `deployment` to deploy on all targets.
+
+Use `--target` flag to specify environment on which you are deploying:
+```bash
+toolbox services up                     # uses default-target (dev)
+toolbox services up --target prod        # deploy to prod
+toolbox services up --target local-network
+```
+
 ## CLI reference
 
 ### Up (start)
 
 ```bash
 # Start main stack + all tasks (builds images if needed)
-toolbox services up --all
+toolbox services up
 
 # Start only selected tasks
 toolbox services up simple-task-example
 
 # Skip rebuilding images
-toolbox services up --all --no-build
+toolbox services up --no-build
 ```
 
 Aliases: `start`
@@ -126,7 +159,7 @@ docker service logs hack4krak-task-simple-task-example_whoami --follow
 
 ```bash
 cp .env.example .env   # set DOCKER_SOCK for your environment
-toolbox services up --all
+toolbox services up
 toolbox services status
 ```
 
@@ -143,7 +176,7 @@ toolbox services logs simple-task-example --tail 100
 
 ```bash
 toolbox services down --all
-toolbox services up --all
+toolbox services up
 ```
 
 ### Rebuild after a code change
@@ -159,7 +192,7 @@ toolbox services logs simple-task-example --tail 100
 
 ```bash
 toolbox services down --all
-toolbox services up --all
+toolbox services up
 ```
 
 ## Inspecting Docker resources directly

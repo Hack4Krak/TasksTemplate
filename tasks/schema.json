@@ -68,6 +68,20 @@
         }
       },
       "required": ["icon_coordinates"]
+    },
+    "deployment": {
+      "type": "object",
+      "properties": {
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "Restrict this task to only deploy on these targets. If omitted, task deploys on all targets."
+        }
+      },
+      "required": ["targets"]
     }
   },
   "required": ["id", "name", "flag_hash", "difficulty_estimate", "labels", "story", "display"]

@@ -50,9 +50,10 @@ def list_task_deployments(
     requested_target: str | None = None,
     requested_tasks: set[str] | None = None,
 ) -> list[TaskDeployment]:
-    from toolbox.utils.tasks import get_task_deployment_target
+    from toolbox.utils.tasks import get_task_deployment_targets
 
     default_target = load_deployments_config(config_directory).default_target
+    current_target = requested_target or default_target
     deployments: list[TaskDeployment] = []
 
     for task_directory in find_tasks(tasks_directory):
@@ -63,18 +64,14 @@ def list_task_deployments(
         if compose_file is None:
             continue
 
-        try:
-            task_target = get_task_deployment_target(task_directory) or default_target
-        except FileNotFoundError, TypeError:
-            task_target = default_target
-
-        if requested_target and task_target != requested_target:
+        task_targets = get_task_deployment_targets(task_directory)
+        if task_targets and current_target not in task_targets:
             continue
 
         deployments.append(
             TaskDeployment(
                 task_id=task_directory.name,
-                target=task_target,
+                target=current_target,
                 stack_name=task_stack_name(task_directory.name),
                 compose_file=compose_file,
             )
