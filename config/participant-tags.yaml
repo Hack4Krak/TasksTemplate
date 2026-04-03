@@ -1,0 +1,12 @@
+# This file defines the participant tags used in the project.
+# Participant tags are used for verification of participants during things like registration or serving meals.
+participant-tags:
+  - # Tag name which is displayed in the UI.
+    name: "Present on event"
+    # Unique identifier for the tag, which is used in code.
+    id: "present-on-event"
+    # Description of the tag, which is displayed in the UI.
+    description: "Participant is present on the event and can submit flags."
+  - name: "Breakfast day 1"
+    id: "breakfast-day-1"
+    description: "Participant has received breakfast on day 1."
