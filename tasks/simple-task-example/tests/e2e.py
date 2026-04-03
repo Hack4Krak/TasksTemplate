@@ -1,8 +1,6 @@
 from pathlib import Path
 
-import pytest
-
-from toolbox.utils.test_utils import RequestHelper, check_status_code, load_flag_hash
+from toolbox.utils.test_utils import RequestHelper, check_status_code
 
 task_path = Path(__file__).parent.parent
 request = RequestHelper(default_host="whoami.docker.localhost")
