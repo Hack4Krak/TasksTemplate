@@ -11,6 +11,6 @@ max-team-size: 5
 # There are 2 supported registration modes:
 # - external: teams are registered externally (e.g., by a supervisor, teacher etc.)
 # - internal: the users register teams themselves
-registration-mode: external
+registration-mode: internal
 # Maximal number of teams per organization if in external mode
 max-teams-per-organization: 3
