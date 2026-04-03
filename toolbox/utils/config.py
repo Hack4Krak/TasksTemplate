@@ -1,6 +1,6 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Literal
+from typing import ClassVar, Literal
 
 import yaml
 from pydantic import BaseModel, Field, model_validator
@@ -8,9 +8,12 @@ from pydantic_core import PydanticCustomError
 
 
 class YamlConfig:
+    custom_filename: ClassVar[str | None] = None
+
     @classmethod
     def from_config_directory(cls, config_directory: Path):
-        path = config_directory / f"{cls.__name__.replace('Config', '').lower()}.yaml"
+        filename = cls.custom_filename or cls.__name__.replace("Config", "").lower()
+        path = config_directory / f"{filename}.yaml"
         config = yaml.load(path.read_text(), Loader=yaml.FullLoader)
         if issubclass(cls, BaseModel):
             return cls.model_validate(config)
@@ -151,3 +154,14 @@ class TaskConfig(YamlConfig, BaseModel):
     flag_hash: str
     labels: list[str]
     deployment: TaskDeploymentConfig | None = None
+
+
+class ParticipantTag(BaseModel):
+    id: str
+    name: str
+    description: str
+
+
+class ParticipantTagsConfig(YamlConfig, BaseModel):
+    custom_filename: ClassVar[str] = "participant-tags"
+    participant_tags: list[ParticipantTag] = Field(alias="participant-tags")
