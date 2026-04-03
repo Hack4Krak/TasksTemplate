@@ -238,6 +238,25 @@ def valid_deployments_config():
     }
 
 
+@pytest.fixture
+def valid_participant_tags_config():
+    return """
+    participant-tags:
+      - name: "Present on event"
+        id: "present-on-event"
+        description: "Participant is present on the event."
+    """
+
+
+@pytest.fixture
+def invalid_participant_tags_config_missing_id():
+    return """
+    participant-tags:
+      - name: "Present on event"
+        description: "Participant is present on the event."
+    """
+
+
 @patch.object(Path, "iterdir")
 @patch.object(Path, "is_dir")
 @patch.object(Path, "is_file")
@@ -434,12 +453,16 @@ def test_verify_assets_directory_not_found(mock_is_file, mock_is_dir, mock_iterd
 
 @patch.object(Path, "read_text")
 def test_config_valid_registration_internal(
-    mock_read_text, mock_context, valid_event_config, valid_registration_config_internal, valid_deployments_config
+    mock_read_text,
+    mock_context,
+    valid_event_config,
+    valid_registration_config_internal,
+    valid_participant_tags_config,
 ):
     mock_read_text.side_effect = [
         valid_event_config,
         valid_registration_config_internal,
-        yaml.dump(valid_deployments_config),
+        valid_participant_tags_config,
     ]
 
     with patch.object(Console, "print") as mock_print:
@@ -449,13 +472,13 @@ def test_config_valid_registration_internal(
 
 @patch.object(Path, "read_text")
 def test_config_valid_registration_external(
-    mock_read_text, mock_context, valid_event_config, valid_registration_config_external, valid_deployments_config
+    mock_read_text,
+    mock_context,
+    valid_event_config,
+    valid_registration_config_external,
+    valid_participant_tags_config,
 ):
-    mock_read_text.side_effect = [
-        valid_event_config,
-        valid_registration_config_external,
-        yaml.dump(valid_deployments_config),
-    ]
+    mock_read_text.side_effect = [valid_event_config, valid_registration_config_external, valid_participant_tags_config]
 
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
@@ -473,7 +496,7 @@ def test_config_registration_external_no_max_team_per_org(
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
         mock_print.assert_called_with(
-            "[red]Event or registration config is invalid: 1 validation error for RegistrationConfig\n  "
+            "[red]One of event configs is invalid: 1 validation error for RegistrationConfig\n  "
             "'max-teams-per-organization' must be provided if registration-mode is external "
             "[type=missing_max_teams_per_organization, input_value={'start-date': datetime.d...ation-mode': 'external'}"
             ", input_type=dict]",
@@ -535,9 +558,14 @@ def test_config_missing_event_end_stage(
 
 @patch.object(Path, "read_text")
 def test_config_multiple_event_start_stages(
-    mock_read_text, mock_context, invalid_event_multiple_start_stages_config, valid_registration_config_internal
+    mock_read_text,
+    mock_context,
+    invalid_event_multiple_start_stages_config,
 ):
-    mock_read_text.side_effect = [invalid_event_multiple_start_stages_config, valid_registration_config_internal]
+    mock_read_text.side_effect = [
+        invalid_event_multiple_start_stages_config,
+        valid_registration_config_internal,
+    ]
 
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
@@ -546,9 +574,15 @@ def test_config_multiple_event_start_stages(
 
 @patch.object(Path, "read_text")
 def test_config_multiple_event_end_stages(
-    mock_read_text, mock_context, invalid_event_multiple_end_stages_config, valid_registration_config_internal
+    mock_read_text,
+    mock_context,
+    valid_registration_config_internal,
+    invalid_event_multiple_end_stages_config,
 ):
-    mock_read_text.side_effect = [invalid_event_multiple_end_stages_config, valid_registration_config_internal]
+    mock_read_text.side_effect = [
+        invalid_event_multiple_end_stages_config,
+        valid_registration_config_internal,
+    ]
 
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
@@ -610,3 +644,47 @@ def test_missing_verify_pictures(mock_is_file):
     mock_is_file.return_value = False
 
     assert verify_pictures(Path("assets"), "", {}) is False
+
+
+@patch.object(Path, "iterdir")
+@patch.object(Path, "read_text")
+def test_config_valid_participant_tags(
+    mock_read_text,
+    mock_iterdir,
+    mock_context,
+    valid_event_config,
+    valid_registration_config_internal,
+    valid_deployments_config,
+    valid_participant_tags_config,
+):
+    mock_iterdir.return_value = []
+    mock_read_text.side_effect = [
+        valid_event_config,
+        valid_registration_config_internal,
+        valid_participant_tags_config,
+    ]
+
+    with patch.object(Console, "print") as mock_print:
+        config(mock_context)
+        mock_print.assert_called_with("[green]All config files are valid!", sep=" ", end="\n")
+
+
+@patch.object(Path, "read_text")
+def test_config_invalid_participant_tags(
+    mock_read_text,
+    mock_context,
+    valid_event_config,
+    valid_registration_config_internal,
+    valid_deployments_config,
+    invalid_participant_tags_config_missing_id,
+):
+    mock_read_text.side_effect = [
+        valid_event_config,
+        valid_registration_config_internal,
+        invalid_participant_tags_config_missing_id,
+    ]
+
+    with patch.object(Console, "print") as mock_print:
+        config(mock_context)
+        mock_print.assert_called_once()
+        assert "[red]" in mock_print.call_args[0][0]
