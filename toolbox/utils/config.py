@@ -160,8 +160,23 @@ class ParticipantTag(BaseModel):
     id: str
     name: str
     description: str
+    type: str = Field(..., alias="type")
 
 
 class ParticipantTagsConfig(YamlConfig, BaseModel):
     custom_filename: ClassVar[str] = "participant-tags"
     participant_tags: list[ParticipantTag] = Field(alias="participant-tags")
+
+    @model_validator(mode="after")
+    def validate_tag_types(self):
+        # Collect all unique types used in tags
+        used_types = {tag.type for tag in self.participant_tags}
+
+        # Validate that "verified" type is always present
+        if "verified" not in used_types:
+            raise PydanticCustomError(
+                "missing_verified_type",
+                "At least one tag with type 'verified' must be defined",
+            )
+
+        return self

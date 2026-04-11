@@ -245,6 +245,7 @@ def valid_participant_tags_config():
       - name: "Present on event"
         id: "present-on-event"
         description: "Participant is present on the event."
+        type: "verified"
     """
 
 
@@ -254,6 +255,18 @@ def invalid_participant_tags_config_missing_id():
     participant-tags:
       - name: "Present on event"
         description: "Participant is present on the event."
+        type: "verified"
+    """
+
+
+@pytest.fixture
+def invalid_participant_tags_config_missing_verified_type():
+    return """
+    participant-tags:
+      - name: "Breakfast day 1"
+        id: "breakfast-day-1"
+        description: "Participant has received breakfast on day 1."
+        type: "meal"
     """
 
 
@@ -478,7 +491,11 @@ def test_config_valid_registration_external(
     valid_registration_config_external,
     valid_participant_tags_config,
 ):
-    mock_read_text.side_effect = [valid_event_config, valid_registration_config_external, valid_participant_tags_config]
+    mock_read_text.side_effect = [
+        valid_event_config,
+        valid_registration_config_external,
+        valid_participant_tags_config,
+    ]
 
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
@@ -682,6 +699,27 @@ def test_config_invalid_participant_tags(
         valid_event_config,
         valid_registration_config_internal,
         invalid_participant_tags_config_missing_id,
+    ]
+
+    with patch.object(Console, "print") as mock_print:
+        config(mock_context)
+        mock_print.assert_called_once()
+        assert "[red]" in mock_print.call_args[0][0]
+
+
+@patch.object(Path, "read_text")
+def test_config_invalid_participant_tags_missing_verified_type(
+    mock_read_text,
+    mock_context,
+    valid_event_config,
+    valid_registration_config_internal,
+    valid_deployments_config,
+    invalid_participant_tags_config_missing_verified_type,
+):
+    mock_read_text.side_effect = [
+        valid_event_config,
+        valid_registration_config_internal,
+        invalid_participant_tags_config_missing_verified_type,
     ]
 
     with patch.object(Console, "print") as mock_print:
