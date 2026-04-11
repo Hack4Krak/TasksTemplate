@@ -1,5 +1,7 @@
-# This file defines the participant tags used in the project.
+# This file defines the participant tags and their types used in the project.
 # Participant tags are used for verification of participants during things like registration or serving meals.
+# Each tag has a type that categorizes its purpose.
+
 participant-tags:
   - # Tag name which is displayed in the UI.
     name: "Present on event"
@@ -7,6 +9,9 @@ participant-tags:
     id: "present-on-event"
     # Description of the tag, which is displayed in the UI.
     description: "Participant is present on the event and can submit flags."
+    # Type of the tag (e.g., verified, meal)
+    type: "verified"
   - name: "Breakfast day 1"
     id: "breakfast-day-1"
     description: "Participant has received breakfast on day 1."
+    type: "meal"
