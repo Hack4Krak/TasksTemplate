@@ -26,6 +26,8 @@ def valid_event_config():
       - name: Event end
         type: event-end
         start-date: 2025-02-15T15:30:00+01:00
+    phases:
+        main: 2025-02-15T09:00:00+01:00
     """
 
 
@@ -107,6 +109,8 @@ def invalid_event_stage_config():
       - name: Warm-up
         type: normal
         start-date: 2025-02-15T09:00:00+01:00
+    phases:
+        main: 2025-02-15T09:00:00+01:00
     """
 
 
@@ -122,6 +126,8 @@ def invalid_event_missing_start_stage_config():
       - name: Event end
         type: event-end
         start-date: 2025-02-15T15:30:00+01:00
+    phases:
+        main: 2025-02-15T09:00:00+01:00
     """
 
 
@@ -137,6 +143,8 @@ def invalid_event_missing_end_stage_config():
       - name: Lunch
         type: informative
         start-date: 2025-02-15T12:30:00+01:00
+    phases:
+        main: 2025-02-15T09:00:00+01:00
     """
 
 
@@ -155,11 +163,33 @@ def invalid_event_multiple_start_stages_config():
       - name: Event end
         type: event-end
         start-date: 2025-02-15T15:30:00+01:00
+    phases:
+        main: 2025-02-15T09:00:00+01:00
     """
 
 
 @pytest.fixture
 def invalid_event_multiple_end_stages_config():
+    return """
+    id: tasks
+    name: Hack4Krak Test Edition
+    stages:
+      - name: Event start
+        type: event-start
+        start-date: 2025-02-15T08:30:00+01:00
+      - name: Event end A
+        type: event-end
+        start-date: 2025-02-15T15:30:00+01:00
+      - name: Event end B
+        type: event-end
+        start-date: 2025-02-15T16:30:00+01:00
+    phases:
+        main: 2025-02-15T09:00:00+01:00
+    """
+
+
+@pytest.fixture
+def invalid_event_missing_phases_config():
     return """
     id: tasks
     name: Hack4Krak Test Edition
@@ -604,6 +634,23 @@ def test_config_multiple_event_end_stages(
     with patch.object(Console, "print") as mock_print:
         config(mock_context)
         assert "invalid_event_stage_count" in mock_print.call_args[0][0]
+
+
+@patch.object(Path, "read_text")
+def test_config_missing_phases(
+    mock_read_text,
+    mock_context,
+    valid_registration_config_internal,
+    invalid_event_missing_phases_config,
+):
+    mock_read_text.side_effect = [
+        invalid_event_missing_phases_config,
+        valid_registration_config_internal,
+    ]
+
+    with patch.object(Console, "print") as mock_print:
+        config(mock_context)
+        assert "phases" in mock_print.call_args[0][0]
 
 
 @patch.object(Path, "read_text")

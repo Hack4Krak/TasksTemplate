@@ -7,6 +7,8 @@ difficulty_estimate: "easy"
 labels:
   - "web"
 
+phase: main
+
 assets:
   - description: "Hard html game to find button"
     path: "task.html"
