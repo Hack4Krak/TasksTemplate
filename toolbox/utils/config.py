@@ -54,6 +54,7 @@ class EventConfig(YamlConfig, BaseModel):
     id: str
     name: str | None = None
     stages: list[EventStage] = Field(default_factory=list)
+    phases: dict[str, datetime]
 
     @model_validator(mode="after")
     def check_stages(self):

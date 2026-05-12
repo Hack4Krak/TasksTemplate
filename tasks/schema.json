@@ -21,6 +21,10 @@
         "type": "string"
       }
     },
+    "phase": {
+      "type": "string",
+      "description": "A phase name used in event.yaml"
+    },
     "assets": {
       "type": "array",
       "items": {
