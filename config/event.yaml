@@ -31,5 +31,6 @@ stages:
     type: event-end
     start-date: 2025-02-16T16:00:00+01:00
 
-phases:
+# Task release phases mark a timestamp when the task should be shown.
+task_release_phases:
   main: 2025-02-15T10:00:00+01:00

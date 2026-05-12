@@ -19,7 +19,9 @@ difficulty_estimation: "easy"
 # Label icons are defined in `config/assets/labels/` file, they should have same name as label id.
 labels:
   - "web"
-
+# Marks a timestamp when the task should be shown.
+# Phase timestamps are defined in `config/event.yaml`.
+task_release_phase: "main"
 
 # All assets for tasks have to be registered here
 # Please refer to `docs/structure/assets.md` for more information
