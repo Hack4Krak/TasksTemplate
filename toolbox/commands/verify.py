@@ -86,6 +86,7 @@ def tasks(context: typer.Context):
     tasks_directory: Path = context.obj["tasks_directory"]
     config_directory: Path = context.obj["config_directory"]
     labels_config = [label.id for label in LabelsConfig.from_config_directory(config_directory).labels]
+    event_config = EventConfig.from_config_directory(config_directory)
 
     schema_path = tasks_directory / "schema.json"
     schema = json.loads(schema_path.read_text())
@@ -133,6 +134,12 @@ def tasks(context: typer.Context):
                 rich.print(f"[red]Invalid label format in task {subdir_path}: {label}")
                 invalid_count += 1
                 continue
+
+        phase = yaml_data.get("task_release_phase")
+        if phase not in event_config.task_release_phases:
+            rich.print(f"Task release phase '{phase}' is not defined in event config")
+            invalid_count += 1
+            continue
 
         valid_count += 1
 

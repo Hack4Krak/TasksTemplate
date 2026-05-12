@@ -7,7 +7,7 @@ difficulty_estimate: "easy"
 labels:
   - "web"
 
-phase: main
+task_release_phase: main
 
 assets:
   - description: "Hard html game to find button"

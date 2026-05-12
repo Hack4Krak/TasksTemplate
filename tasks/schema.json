@@ -21,7 +21,7 @@
         "type": "string"
       }
     },
-    "phase": {
+    "task_release_phase": {
       "type": "string",
       "description": "A phase name used in event.yaml"
     },
