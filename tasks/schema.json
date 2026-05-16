@@ -13,7 +13,7 @@
     },
     "difficulty_estimate": {
       "type": "string",
-      "enum": ["easy", "medium", "hard"]
+      "enum": ["rookie", "easy", "medium", "hard"]
     },
     "labels": {
       "type": "array",
