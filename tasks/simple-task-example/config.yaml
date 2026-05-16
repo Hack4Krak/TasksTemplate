@@ -7,6 +7,10 @@ difficulty_estimate: "easy"
 labels:
   - "web"
 
+authors:
+  - name: "Norbiros"
+    url: "https://norbiros.dev"
+
 task_release_phase: main
 
 assets:

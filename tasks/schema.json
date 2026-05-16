@@ -21,6 +21,23 @@
         "type": "string"
       }
     },
+    "authors": {
+      "type": "array",
+      "description": "People credited as task authors, optionally with a contact or profile URL.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": ["name"]
+      }
+    },
     "task_release_phase": {
       "type": "string",
       "description": "A phase name used in event.yaml"
