@@ -69,7 +69,14 @@ def run_tests(
             collector = _ResultCollector()
             buf = io.StringIO()
             with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
-                pytest.main([str(test_path), "--tb=short", "--no-header"], plugins=[collector])
+                pytest_exit_code = pytest.main(
+                    [str(test_path), "--tb=short", "--no-header", "--import-mode=importlib"],
+                    plugins=[collector],
+                )
+
+            if pytest_exit_code != 0 and collector.failed == 0:
+                collector.failed += 1
+                collector.failures.append(buf.getvalue().strip())
 
             task_passed += collector.passed
             task_failed += collector.failed
