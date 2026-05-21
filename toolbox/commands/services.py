@@ -15,13 +15,14 @@ from toolbox.utils.deployment.deployment import (
     load_deployments_config,
     resolve_main_compose_path,
 )
+from toolbox.utils.deployment.models import StackStatus
 from toolbox.utils.deployment.network import (
     ensure_stack_network,
     ensure_swarm_ready,
 )
 from toolbox.utils.deployment.service import get_stack_logs
 from toolbox.utils.deployment.stack import MAIN_STACK_NAME, deploy_stack, remove_stack
-from toolbox.utils.deployment.stats import get_stack_status
+from toolbox.utils.deployment.stats import get_all_service_stats, get_existing_stacks, get_stack_status
 
 app = typer.Typer(no_args_is_help=True, help="Manage CTF task services")
 
@@ -81,10 +82,19 @@ def status(
 
     for target_name in sorted(by_target):
         docker = create_docker_client()
+        existing_stacks = get_existing_stacks(docker)
+        status_stack_names = {deployment.stack_name for deployment in by_target[target_name]}
+        if not task:
+            status_stack_names.add(MAIN_STACK_NAME)
+        service_stats = (
+            get_all_service_stats(docker)
+            if existing_stacks is not None and not status_stack_names.isdisjoint(existing_stacks)
+            else {}
+        )
         if not task:
             main_compose = resolve_main_compose_path(context.obj["config_directory"], target_name, None)
             expected_services = load_compose_service_specs(main_compose)
-            stack_status = get_stack_status(docker, MAIN_STACK_NAME, expected_services)
+            stack_status = _stack_status(docker, MAIN_STACK_NAME, expected_services, existing_stacks, service_stats)
             table.add_row(
                 MAIN_STACK_NAME,
                 target_name,
@@ -97,7 +107,13 @@ def status(
             )
         for deployment in by_target[target_name]:
             expected_services = load_compose_service_specs(deployment.compose_file)
-            stack_status = get_stack_status(docker, deployment.stack_name, expected_services)
+            stack_status = _stack_status(
+                docker,
+                deployment.stack_name,
+                expected_services,
+                existing_stacks,
+                service_stats,
+            )
             table.add_row(
                 deployment.task_id,
                 target_name,
@@ -110,6 +126,12 @@ def status(
             )
 
     rich.print(table)
+
+
+def _stack_status(docker, stack_name, expected_services, existing_stacks, service_stats) -> StackStatus:
+    if existing_stacks is None:
+        return StackStatus("swarm inactive", "docker swarm is not initialized on this target")
+    return get_stack_status(docker, stack_name, expected_services, existing_stacks, service_stats)
 
 
 @app.command("up")
