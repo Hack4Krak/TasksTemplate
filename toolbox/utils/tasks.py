@@ -34,6 +34,14 @@ def load_task_config(task_directory: Path) -> TaskConfig:
     return TaskConfig.from_path(task_directory / "config.yaml")
 
 
+def get_task_release_phase(task_directory: Path) -> str | None:
+    try:
+        config = load_task_config(task_directory)
+    except FileNotFoundError, TypeError, ValueError:
+        return None
+    return config.task_release_phase
+
+
 def get_task_deployment_targets(task_directory: Path) -> list[str]:
     try:
         config = load_task_config(task_directory)

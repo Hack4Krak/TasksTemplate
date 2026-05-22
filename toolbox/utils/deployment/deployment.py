@@ -1,9 +1,10 @@
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
 
 from toolbox.utils.config import DeploymentsConfig, DeploymentTargetConfig
-from toolbox.utils.tasks import find_docker_compose_file, find_tasks
+from toolbox.utils.tasks import find_docker_compose_file, find_tasks, get_task_release_phase
 
 from .models import ComposeServiceSpec, TaskDeployment
 from .stack import task_stack_name
@@ -44,11 +45,29 @@ def create_docker_client(
     return DockerClient(**kwargs)
 
 
+def _to_utc(dt: datetime) -> datetime:
+
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=UTC)
+    return dt.astimezone(UTC)
+
+
+def get_active_phases(config_directory: Path) -> set[str]:
+    from datetime import datetime
+
+    from toolbox.utils.config import EventConfig
+
+    event = EventConfig.from_config_directory(config_directory)
+    now = datetime.now(UTC)
+    return {name for name, start in event.task_release_phases.items() if _to_utc(start) <= now}
+
+
 def list_task_deployments(
     tasks_directory: Path,
     config_directory: Path,
     requested_target: str | None = None,
     requested_tasks: set[str] | None = None,
+    phase_filter: set[str] | None = None,
 ) -> list[TaskDeployment]:
     from toolbox.utils.tasks import get_task_deployment_targets
 
@@ -67,6 +86,11 @@ def list_task_deployments(
         task_targets = get_task_deployment_targets(task_directory)
         if task_targets and current_target not in task_targets:
             continue
+
+        if phase_filter is not None:
+            task_phase = get_task_release_phase(task_directory)
+            if task_phase not in phase_filter:
+                continue
 
         deployments.append(
             TaskDeployment(
